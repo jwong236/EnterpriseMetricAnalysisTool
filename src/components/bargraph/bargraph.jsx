@@ -1,12 +1,92 @@
 import React from 'react';
 import './bargraph.css';
+import {BarChart} from '@mui/x-charts/BarChart';
+import {FormGroup, FormControl, FormControlLabel, Checkbox, InputLabel, Select, MenuItem} from '@mui/material';
 
-const data = {
+// const positive_color = '#0057D2';
+// const negative_color = '#AA0808';
+const positive_color = '#AA0808';
+const negative_color = '#0057D2';
+  
+let correlations = [
+    ['Deployment Frequency',       -0.409392],
+    ['Lead Time for Changes',       0.429082],
+    ['Change Failure Rate',         0.516650],
+    ['Time to Restore Service',     0.164581],
+    ['Open Issue Bug Count',        0.466147],
+    ['Pull Request Pickup Time',   -0.624221],
+    ['Refinement Changes',          0.802181],
+    ['Meeting Satisfaction',        0.000000]
+]
 
-}
+let BarGraph = (data) => {
+    const [metric, setMetric] = React.useState('');
 
-let BarGraph = () => {
-    return <p>BarGraph</p>
+    const handleChange = (event) => {
+      setMetric(event.target.value);
+    };
+
+    let dataset = correlations.map((metric) => {
+        if ( metric[1] < 0 ){
+            return {metric: metric[0], positive_correlation: 0, negative_correlation: -metric[1]}
+        }
+        return {metric: metric[0], positive_correlation: metric[1], negative_correlation: 0}
+    });
+    
+    dataset = dataset.sort((a, b) => {
+        let aval = a.positive_correlation ? a.positive_correlation : a.negative_correlation;
+        let bval = b.positive_correlation ? b.positive_correlation : b.negative_correlation;
+        return aval < bval? 1 : -1;
+    })
+    
+    const checkboxes = dataset.map((data) => {
+        return <FormControlLabel control={<Checkbox />} label={data.metric} />
+    })
+    
+    const dropdowns = dataset.map((data) => {
+        return <MenuItem value={data.metric}>{data.metric}</MenuItem>
+    })
+
+    return (
+    <>
+    <div class="bar-chart-container">
+      <div class="chart">
+        <h1>Compare Against...</h1>
+        <FormGroup>
+          {checkboxes}
+          <FormControlLabel control={<Checkbox />} label="Average Task Blocked Time" />
+          <FormControlLabel control={<Checkbox />} label="All" />
+        </FormGroup>
+      </div>
+
+      <div class="chart">
+        <p>Correlation of:         
+          <FormControl fullWidth>
+            <InputLabel>Metric</InputLabel>
+            <Select
+              value={metric}
+              label="Metric"
+              onChange={handleChange}
+            >
+              {dropdowns}
+              <MenuItem value="Average Task Blocked Time">Average Task Blocked Time</MenuItem>
+            </Select>
+          </FormControl>
+        </p>
+        <BarChart
+          dataset={dataset}
+          yAxis={[{ scaleType: 'band', dataKey: 'metric' }]}
+          series={[{ dataKey: 'positive_correlation', label: 'Positive Correlation', color: positive_color, stack: 'total'},
+                  { dataKey: 'negative_correlation', label: 'Negative Correlation', color: negative_color, stack: 'total'}]}
+          layout="horizontal"
+          height={400}
+          width={600}
+          margin={{left: 300}}
+        />
+      </div>
+    </div>
+    </>
+    );
 }
 
 export default BarGraph;

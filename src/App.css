@@ -2,7 +2,14 @@ body {
   background-color: #FFFFFFD9;
 }
 
-div {
+.chart-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.chart {
   display: flex;
   flex-direction: column;
   align-items: center;

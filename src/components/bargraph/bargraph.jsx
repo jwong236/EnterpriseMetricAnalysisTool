@@ -39,7 +39,7 @@ let BarGraph = ({correlations}) => {
     return (
     <>
     <div class="bar-chart-container">
-      <div class="chart">
+      <div class="center-container">
         <h1>Compare Against...</h1>
         <FormGroup>
           {checkboxes}
@@ -48,7 +48,7 @@ let BarGraph = ({correlations}) => {
         </FormGroup>
       </div>
 
-      <div class="chart">
+      <div class="center-container">
         <p>Correlation of:         
           <FormControl fullWidth>
             <InputLabel>Metric</InputLabel>

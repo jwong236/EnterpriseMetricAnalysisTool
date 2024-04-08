@@ -29,7 +29,7 @@ let LineGraph = ({raw_data}) => {
     return (
       <>
       <div class="line-chart-container">
-        <div class="chart">
+        <div class="center-container">
           <h1>Check Metrics</h1>
           <FormGroup>
           {checkboxes}
@@ -37,7 +37,7 @@ let LineGraph = ({raw_data}) => {
           </FormGroup>
         </div>
   
-        <div class="chart">
+        <div class="center-container">
           <p>Raw Data</p>
           <LineChart
             yAxis={[{label: 'Metric Value'}]}

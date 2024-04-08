@@ -7,19 +7,8 @@ import {FormGroup, FormControl, FormControlLabel, Checkbox, InputLabel, Select, 
 // const negative_color = '#AA0808';
 const positive_color = '#AA0808';
 const negative_color = '#0057D2';
-  
-let correlations = [
-    ['Deployment Frequency',       -0.409392],
-    ['Lead Time for Changes',       0.429082],
-    ['Change Failure Rate',         0.516650],
-    ['Time to Restore Service',     0.164581],
-    ['Open Issue Bug Count',        0.466147],
-    ['Pull Request Pickup Time',   -0.624221],
-    ['Refinement Changes',          0.802181],
-    ['Meeting Satisfaction',        0.000000]
-]
 
-let BarGraph = (data) => {
+let BarGraph = ({correlations}) => {
     const [metric, setMetric] = React.useState('');
 
     const handleChange = (event) => {

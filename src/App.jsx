@@ -1,8 +1,9 @@
 import './App.css';
+import React from 'react';
 // import {Bargraph} from './components';
 import {BarChart} from '@mui/x-charts/BarChart';
 import {LineChart} from '@mui/x-charts/LineChart';
-import {FormGroup, FormControlLabel, Checkbox} from '@mui/material';
+import {FormGroup, FormControl, FormControlLabel, Checkbox, InputLabel, Select, MenuItem} from '@mui/material';
 
 let raw_data = {
   'Deployment Frequency': [15, 12, 18, 20, 17, 14, 22, 19, 16, 21],
@@ -10,7 +11,7 @@ let raw_data = {
   'Change Failure Rate': [0.1, 0.2, 0.05, 0.15, 0.1, 0.25, 0.2, 0.1, 0.15, 0.05],
   'Time to Restore Service': [4, 6, 2, 5, 4, 3, 7, 4, 3, 5],
   'Open Issue Bug Count': [25, 30, 20, 22, 28, 26, 18, 24, 29, 23],
-  'Pull Request Pickup Time': [2, 1, 3, 2, 1, 2, 4, 3, 2, 1],
+  'Average Pull Request Pickup Time': [2, 1, 3, 2, 1, 2, 4, 3, 2, 1],
   'Refinement Changes': [10, 12, 8, 9, 11, 15, 7, 10, 8, 13],
   'Task Block Time': [2, 3, 1, 2, 3, 4, 2, 1, 2, 3],
   'Meeting Satisfaction': [4, 3, 5, 4, 3, 5, 4, 3, 5, 4]
@@ -39,14 +40,14 @@ let correlations = [
 
 let dataset = correlations.map((metric) => {
   if ( metric[1] < 0 ){
-    return {metric: metric[0], negative_correlation: -metric[1]}
+    return {metric: metric[0], positive_correlation: 0, negative_correlation: -metric[1]}
   }
-  return {metric: metric[0], positive_correlation: metric[1]}
+  return {metric: metric[0], positive_correlation: metric[1], negative_correlation: 0}
 });
 
 dataset = dataset.sort((a, b) => {
-  let aval = a.hasOwnProperty('positive_correlation') ? a.positive_correlation : a.negative_correlation;
-  let bval = b.hasOwnProperty('positive_correlation') ? b.positive_correlation : b.negative_correlation;
+  let aval = a.positive_correlation ? a.positive_correlation : a.negative_correlation;
+  let bval = b.positive_correlation ? b.positive_correlation : b.negative_correlation;
   return aval < bval? 1 : -1;
 })
 
@@ -59,6 +60,9 @@ const checkboxes = dataset.map((data) => {
   return <FormControlLabel control={<Checkbox />} label={data.metric} />
 })
 
+const dropdowns = dataset.map((data) => {
+  return <MenuItem value={data.metric}>{data.metric}</MenuItem>
+})
 // [`Deployment Frequency`, 
 //                 `Lead Time for Changes`, 
 //                 `Change Failure Rate`, 
@@ -77,18 +81,39 @@ const get_series = include.map((metric) => {
 })
 
 function App() {
+  const [metric, setMetric] = React.useState('');
+
+  const handleChange = (event) => {
+    setMetric(event.target.value);
+  };
+
   return (
     <>
+
     <div class="bar-chart-container">
       <div class="chart">
         <h1>Compare Against...</h1>
         <FormGroup>
-        {checkboxes}
-        <FormControlLabel control={<Checkbox />} label="Average Task Blocked Time" />
+          {checkboxes}
+          <FormControlLabel control={<Checkbox />} label="Average Task Blocked Time" />
+          <FormControlLabel control={<Checkbox />} label="All" />
         </FormGroup>
       </div>
+
       <div class="chart">
-        <p>Correlation Against: Average Task Blocked Time</p>
+        <p>Correlation of:         
+          <FormControl fullWidth>
+            <InputLabel>Metric</InputLabel>
+            <Select
+              value={metric}
+              label="Metric"
+              onChange={handleChange}
+            >
+              {dropdowns}
+              <MenuItem value="Average Task Blocked Time">Average Task Blocked Time</MenuItem>
+            </Select>
+          </FormControl>
+        </p>
         <BarChart
           dataset={dataset}
           yAxis={[{ scaleType: 'band', dataKey: 'metric' }]}
@@ -101,6 +126,8 @@ function App() {
         />
       </div>
     </div>
+
+
     <div class="line-chart-container">
       <div class="chart">
         <h1>Check Metrics</h1>
@@ -109,9 +136,11 @@ function App() {
         <FormControlLabel control={<Checkbox />} label="Average Task Blocked Time" />
         </FormGroup>
       </div>
+
       <div class="chart">
         <p>Raw Data</p>
         <LineChart
+          yAxis={[{label: 'Metric Value'}]}
           xAxis={[{data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], label: 'Sprint Number'}]}
           series={get_series}
           layout="horizontal"
@@ -120,6 +149,7 @@ function App() {
         />
       </div>
     </div>
+
     </>
   )
 }

@@ -1,24 +1,24 @@
 
-def getRefinementChanges(startSprint, endSprint):
+def getRefinementChanges(startDate, endSprint):
     pass
 
-def getPRPickedUpTime(startSprint, endSprint):
+def getPRPickedUpTime(startDate, endSprint):
     pass
 
-def getChangeFailureRate(startSprint, endSprint):
+def getChangeFailureRate(startDate, endSprint):
     pass
 
-def getOpenIssueBugCount(startSprint, endSprint):
+def getOpenIssueBugCount(startDate, endSprint):
     pass
 
-def getLeadTimeForChanges(startSprint, endSprint):
+def getLeadTimeForChanges(startDate, endSprint):
     pass
 
-def getDeploymentFrequency(startSprint, endSprint):
+def getDeploymentFrequency(startDate, endSprint):
     pass
 
-def getTimeToRestoreService(startSprint, endSprint):
+def getTimeToRestoreService(startDate, endSprint):
     pass
 
-def getAverageTaskBlockTime(startSprint, endSprint):
+def getAverageTaskBlockTime(startDate, endSprint):
     pass

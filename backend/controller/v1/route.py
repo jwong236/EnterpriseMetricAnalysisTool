@@ -1,4 +1,5 @@
 from flask import Blueprint, request
+import services.matrix.service as s
 
 bp = Blueprint("v1", __name__)
 
@@ -13,6 +14,10 @@ def index():
 def getMatrix():
     data = request.json
     print(data)
+    startDate = data["startDate"]
+    endDate = data["endDate"]
+    res = s.metric()
     return {
-        "message" : "TODO"
+        "message" : "TODO",
+        "data" : res,
     }

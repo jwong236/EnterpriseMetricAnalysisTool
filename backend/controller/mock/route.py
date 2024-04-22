@@ -1,5 +1,5 @@
 from flask import Blueprint
-import service.matrix.mock as s
+import services.matrix.mock as s
 
 bp = Blueprint("mock", __name__)
 

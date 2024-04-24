@@ -5,10 +5,10 @@ import {FormGroup, FormControl, FormControlLabel, Checkbox, InputLabel, Select, 
 
 // const positive_color = '#0057D2';
 // const negative_color = '#AA0808';
-const positive_color = '#AA0808';
-const negative_color = '#0057D2';
+const positive_color = '#2B7D2B';
+const negative_color = '#BB0000';
 
-let BarGraph = ({correlations}) => {
+const BarGraph = ({correlations}) => {
     const [metric, setMetric] = React.useState('');
 
     const handleChange = (event) => {
@@ -39,8 +39,8 @@ let BarGraph = ({correlations}) => {
     return (
     <>
     <div class="bar-chart-container">
-      <div class="center-container">
-        <h1>Compare Against...</h1>
+      <div class="metrics-container">
+        <h1>Select Metrics </h1>
         <FormGroup>
           {checkboxes}
           <FormControlLabel control={<Checkbox />} label="Average Task Blocked Time" />
@@ -48,7 +48,7 @@ let BarGraph = ({correlations}) => {
         </FormGroup>
       </div>
 
-      <div class="center-container">
+      <div class="bar-container">
         <p>Correlation of:         
           <FormControl fullWidth>
             <InputLabel>Metric</InputLabel>

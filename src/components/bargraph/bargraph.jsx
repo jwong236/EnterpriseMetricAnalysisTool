@@ -39,20 +39,16 @@ const BarGraph = ({correlations}) => {
       setMetric(event.target.value);
     };
 
+    let states = {}
+    for (let data of dataset) {
+      states[data.metric] = true
+    }
     // used to keep track of which metrics to compare against the selected metric
-    const [state, setState] = React.useState({
-      '0': true,
-      '1': true,
-      '2': true,
-      '3': true,
-      '4': true,
-      '5': true
-    });
+    const [state, setState] = React.useState(states);
 
-    const filtered_dataset = sorted_dataset.filter((data, index) => { // filter out the metrics that are not selected based on state objects
-      return state[index.toString()];
+    const filtered_dataset = sorted_dataset.filter((data) => { // filter out the metrics that are not selected based on state objects
+      return state[data.metric];
     })
-    console.log(filtered_dataset.length)
     const empty_data = [{metric: "No Metrics Selected", "positive_correlation": 1, "negative_correlation": 1}]
     const use_dataset = filtered_dataset.length ? filtered_dataset : empty_data; // if no metrics are selected, use empty data
 
@@ -65,28 +61,27 @@ const BarGraph = ({correlations}) => {
     }
     
     // Create checkboxes for each metric
-    const checkboxes = sorted_dataset.map((data, index) => {
-        return <FormControlLabel control={<Checkbox />} checked={state[index]} onChange={handleChecks} name={index.toString()} label={data.metric} />
+    const checkboxes = sorted_dataset.map((data) => {
+        return <FormControlLabel key={data.metric} control={<Checkbox />} checked={state[data.metric]} onChange={handleChecks} name={data.metric} label={data.metric} />
     })
     
     // Creates dropdown items
     const dropdowns = sorted_dataset.map((data) => {
-        return <MenuItem value={data.metric}>{data.metric}</MenuItem>
+        return <MenuItem key={data.metric} value={data.metric}>{data.metric}</MenuItem>
     })
 
     return (
     <>
-    <div class="bar-chart-container">
-      <div class="metrics-container">
+    <div className="bar-chart-container">
+      <div className="metrics-container">
         <h1>Select Metrics </h1>
         <FormGroup>
           {checkboxes}
-          <FormControlLabel control={<Checkbox />} label="Average Task Blocked Time" />
         </FormGroup>
       </div>
 
-      <div class="bar-container">
-        <p>Correlation of:         
+      <div className="bar-container">
+        <p>Correlation of:</p>    
           <FormControl fullWidth>
             <InputLabel>Metric</InputLabel>
             <Select
@@ -95,10 +90,8 @@ const BarGraph = ({correlations}) => {
               onChange={handleChange}
             >
               {dropdowns}
-              <MenuItem value="Average Task Blocked Time">Average Task Blocked Time</MenuItem>
             </Select>
           </FormControl>
-        </p>
         <BarChart
           dataset={use_dataset}
           yAxis={[{ scaleType: 'band', dataKey: 'metric' }]}

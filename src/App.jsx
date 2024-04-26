@@ -29,7 +29,7 @@ function App() {
   return (
     <>
       <MyBarGraph correlations={correlations}/>
-      {/* <MyLineGraph raw_data={raw_data}/> */}
+      <MyLineGraph raw_data={raw_data}/>
     </>
   )
 }

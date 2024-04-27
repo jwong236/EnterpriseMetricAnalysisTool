@@ -12,17 +12,11 @@ const BarGraph = ({correlations}) => {
     // Turn correlations, which is an array of arrays, into an map with keys metric name and value of correlation against (selected metric)
     // Will change in the future when we figure out our data format
     const dataset = correlations.map((metric) => {
-        // Raw value of metric[i] can be positive or negative.
-        // If negative, it is a negative correlation with the selected metric. 
-        // positive_correlation gets set to 0. 
-        // Later on, I use 'stack' parameter of BarChart to stack the negative and positive correlations. There's probably a better way of doing this
-        // Value of 0 means it doesn't show anything (so each bar will either be only positive, or only negative)
-        if ( metric[1] < 0 ){
-            return {metric: metric[0], positive_correlation: 0, negative_correlation: -metric[1]}
-        }
-        // If positive, it is a positive correlation with the selected metric. 
-        // negative_correlation gets set to 0.
-        return {metric: metric[0], positive_correlation: metric[1], negative_correlation: 0}
+      return { 
+        metric: metric[0], 
+        positive_correlation: metric[1] < 0 ? 0 : metric[1], 
+        negative_correlation: metric[1] > 0 ? 0 : -metric[1]
+      }
     })
     
     // Sort the correlation based on correlation magnitude. 
@@ -71,40 +65,38 @@ const BarGraph = ({correlations}) => {
     })
 
     return (
-    <>
-    <div className="bar-chart-container">
-      <div className="metrics-container">
-        <h1>Select Metrics </h1>
-        <FormGroup>
-          {checkboxes}
-        </FormGroup>
-      </div>
+      <div className="bar-chart-container">
+        <div className="metrics-container">
+          <h1>Select Metrics </h1>
+          <FormGroup>
+            {checkboxes}
+          </FormGroup>
+        </div>
 
-      <div className="bar-container">
-        <p>Correlation of:</p>    
-          <FormControl fullWidth>
-            <InputLabel>Metric</InputLabel>
-            <Select
-              value={metric}
-              label="Metric"
-              onChange={handleChange}
-            >
-              {dropdowns}
-            </Select>
-          </FormControl>
-        <BarChart
-          dataset={use_dataset}
-          yAxis={[{ scaleType: 'band', dataKey: 'metric' }]}
-          series={[{ dataKey: 'positive_correlation', label: 'Positive Correlation', color: positive_color, stack: 'total'},
-                  { dataKey: 'negative_correlation', label: 'Negative Correlation', color: negative_color, stack: 'total'}]}
-          layout="horizontal"
-          height={400}
-          width={600}
-          margin={{left: 300}}
-        />
+        <div className="bar-container">
+          <p>Correlation of:</p>    
+            <FormControl fullWidth>
+              <InputLabel>Metric</InputLabel>
+              <Select
+                value={metric}
+                label="Metric"
+                onChange={handleChange}
+              >
+                {dropdowns}
+              </Select>
+            </FormControl>
+          <BarChart
+            dataset={use_dataset}
+            yAxis={[{ scaleType: 'band', dataKey: 'metric' }]}
+            series={[{ dataKey: 'positive_correlation', label: 'Positive Correlation', color: positive_color, stack: 'total'},
+                    { dataKey: 'negative_correlation', label: 'Negative Correlation', color: negative_color, stack: 'total'}]}
+            layout="horizontal"
+            height={400}
+            width={600}
+            margin={{left: 300}}
+          />
+        </div>
       </div>
-    </div>
-    </>
     );
 }
 

@@ -30,7 +30,6 @@ let LineGraph = ({raw_data}) => {
     })
 
     return (
-      <>
       <div className="line-chart-container">
         <div className="center-container">
           <h1>Check Metrics</h1>
@@ -51,7 +50,6 @@ let LineGraph = ({raw_data}) => {
           />
         </div>
       </div>
-      </>
     );
 }
 

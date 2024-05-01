@@ -1,7 +1,9 @@
-import React from 'react';
+import React, {useState} from 'react';
 import './bargraph.css';
 import {BarChart} from '@mui/x-charts/BarChart';
-import {FormGroup, FormControl, FormControlLabel, Checkbox, InputLabel, Select, MenuItem} from '@mui/material';
+import {FormGroup, FormControl, FormControlLabel, Checkbox, InputLabel, Select, MenuItem, Slider, Box} from '@mui/material';
+import RangeSlider from '../RangeSlider/RangeSlider';
+import SprintRange from '../SprintRange/SprintRange';
 
 // const positive_color = '#0057D2';
 // const negative_color = '#AA0808';
@@ -27,24 +29,24 @@ const BarGraph = ({correlations}) => {
     })
 
     // used to set the current metric we're comparing against
-    const [metric, setMetric] = React.useState('');
+    const [metric, setMetric] = useState('');
 
     const handleChange = (event) => {
       setMetric(event.target.value);
     };
-
+    
     let states = {}
     for (let data of dataset) {
       states[data.metric] = true
     }
     // used to keep track of which metrics to compare against the selected metric
-    const [state, setState] = React.useState(states);
+    const [state, setState] = useState(states);
 
     const filtered_dataset = sorted_dataset.filter((data) => { // filter out the metrics that are not selected based on state objects
-      return state[data.metric];
+      return state[data.metric] && data.metric !== metric
     })
     const empty_data = [{metric: "No Metrics Selected", "positive_correlation": 1, "negative_correlation": 1}]
-    const use_dataset = filtered_dataset.length ? filtered_dataset : empty_data; // if no metrics are selected, use empty data
+    const use_dataset = filtered_dataset.length ? filtered_dataset : empty_data;  // if no metrics are selected, use empty data
 
     // handle checkbox changes
     const handleChecks = (event) => { 
@@ -56,25 +58,24 @@ const BarGraph = ({correlations}) => {
     
     // Create checkboxes for each metric
     const checkboxes = sorted_dataset.map((data) => {
-        return <FormControlLabel key={data.metric} control={<Checkbox />} checked={state[data.metric]} onChange={handleChecks} name={data.metric} label={data.metric} />
+        return <FormControlLabel 
+        key={data.metric} 
+        control={<Checkbox disabled={data.metric === metric} />} 
+        checked={state[data.metric]} 
+        onChange={handleChecks} 
+        name={data.metric} 
+        label={data.metric} />
     })
     
     // Creates dropdown items
     const dropdowns = sorted_dataset.map((data) => {
         return <MenuItem key={data.metric} value={data.metric}>{data.metric}</MenuItem>
     })
-
+    
     return (
       <div className="bar-chart-container">
         <div className="metrics-container">
-          <h1>Select Metrics </h1>
-          <FormGroup>
-            {checkboxes}
-          </FormGroup>
-        </div>
-
-        <div className="bar-container">
-          <p>Correlation of:</p>    
+          <h2>Target Metrics</h2>    
             <FormControl fullWidth>
               <InputLabel>Metric</InputLabel>
               <Select
@@ -85,6 +86,15 @@ const BarGraph = ({correlations}) => {
                 {dropdowns}
               </Select>
             </FormControl>
+          <h2>Comparison Metrics </h2>
+          <FormGroup>
+            {checkboxes}
+          </FormGroup>
+        </div>
+
+        <div className="bar-container">
+          <RangeSlider ></RangeSlider>
+          {/* <SprintRange></SprintRange> */}
           <BarChart
             dataset={use_dataset}
             yAxis={[{ scaleType: 'band', dataKey: 'metric' }]}

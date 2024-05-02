@@ -1,0 +1,28 @@
+import csv
+import random
+from datetime import timedelta, date
+
+def daterange(start_date, end_date):
+    for n in range(int((end_date - start_date).days) + 1):
+        yield start_date + timedelta(n)
+
+def generate_data(start_date, end_date, filename):
+    with open(filename, 'w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(['day', 'avg_time', 'num_prs'])
+
+        for single_date in daterange(start_date, end_date):
+            day = single_date.strftime("%Y-%m-%d")
+            avg_time = random.randint(0, 24)
+            num_prs = random.randint(1, 5)
+
+            writer.writerow([day, avg_time, num_prs])
+
+def main():
+    start_date = date(2024, 1, 1)
+    end_date = date(2024, 12, 31)
+    filename = 'PRTT_DD.csv'
+    generate_data(start_date, end_date, filename)
+
+if __name__ == "__main__":
+    main()

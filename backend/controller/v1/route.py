@@ -143,3 +143,52 @@ def lead_time_for_changes():
         return jsonify({"error": "Lead Time for Changes data file not found."}), 404
     except Exception as e:
         return jsonify({"error": f"An error occurred while processing your request: {str(e)}"}), 500
+
+@bp.route('/raw_metrics/pull_request_turnaround_time')
+def pull_request_turnaround_time():
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
+    if not start_date or not end_date:
+        return jsonify({"error": "Both 'start_date' and 'end_date' are required parameters."}), 400
+    
+    csv_file = r'C:\Users\Jacob Wong\Documents\UCI-SAP-Capstone\PRTT_DD.csv'
+
+    try:
+        df = pd.read_csv(csv_file)
+        df['Start_DateTime'] = pd.to_datetime(df['Start_DateTime'])
+        df['End_DateTime'] = pd.to_datetime(df['End_DateTime'])
+        df['Duration_Hours'] = (df['End_DateTime'] - df['Start_DateTime']).dt.total_seconds() / 3600
+
+        start_date, end_date = adjust_date_range(start_date, end_date, WEEK_START_DAY)
+
+        weeks = pd.date_range(start=start_date, end=end_date + pd.Timedelta(days=1), freq=f'W-{WEEK_START_DAY[:3].upper()}')
+        weekly_turnaround = []
+
+        for i in range(len(weeks) - 1):
+            week_start = weeks[i]
+            week_end = weeks[i + 1] - pd.Timedelta(days=1)
+            df['week_contribution'] = df.apply(lambda x: min(x['End_DateTime'], week_end) - max(x['Start_DateTime'], week_start), axis=1)
+            df['week_contribution'] = df['week_contribution'].dt.total_seconds() / 3600
+            df['week_contribution'] = df['week_contribution'].apply(lambda x: max(x, 0))
+            
+            df['pr_contribution'] = df['week_contribution'] / df['Duration_Hours']
+            total_week_turnaround = df['week_contribution'].sum()
+            pr_count = df['pr_contribution'].sum()
+
+            average_turnaround = total_week_turnaround / pr_count if pr_count else 0
+            
+            weekly_turnaround.append({
+                "week_range": f"{week_start.strftime('%Y-%m-%d')} to {week_end.strftime('%Y-%m-%d')}",
+                "average_turnaround_time": average_turnaround,
+                "pr_count": pr_count,
+                "total_turnaround_time": total_week_turnaround
+            })
+
+        return jsonify({
+            "data": weekly_turnaround,
+            "description": f"Pull Request Turnaround Time from {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}"
+        })
+    except FileNotFoundError:
+        return jsonify({"error": "Turnaround time data file not found."}), 404
+    except Exception as e:
+        return jsonify({"error": f"An error occurred while processing your request: {str(e)}"}), 500

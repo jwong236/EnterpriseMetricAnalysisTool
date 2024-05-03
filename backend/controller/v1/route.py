@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
 import pandas as pd
+from scipy.stats import pearsonr
 
 WEEKDAYS = {
     'Monday': 0,
@@ -69,18 +70,58 @@ def raw_metrics_index():
                     "start_date": "YYYY-MM-DD",
                     "end_date": "YYYY-MM-DD"
                 }
+            },
+            "pull_request_turnaround_time": {
+                "route": "/v1/raw_metrics/pull_request_turnaround_time",
+                "method": "GET",
+                "description": "Get pull request turnaround_time for PRs between start and end dates.",
+                "parameters": {
+                    "start_date": "YYYY-MM-DD",
+                    "end_date": "YYYY-MM-DD"
+                }
             }
         }
     })
 
-
-@bp.route('/raw_metrics/deployment_frequency')
-def deployment_frequency():
+@bp.route('/correlation', methods=['GET'])
+def correlation():
     start_date = request.args.get('start_date')
     end_date = request.args.get('end_date')
-    if not start_date or not end_date:
-        return jsonify({"error": "Both start_date and end_date are required parameters."}), 400
+    main_metric = request.args.get('main_metric')
+    
+    if not (start_date and end_date and main_metric):
+        return jsonify({"error": "Required parameters are missing."}), 400
+    
+    start_date, end_date = adjust_date_range(start_date, end_date, WEEK_START_DAY)
+    
+    deployment_data = calculate_deployment_frequency(start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')).get_json()['data']
+    lead_time_data = calculate_lead_time_for_changes(start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')).get_json()['data']
+    turnaround_time_data = calculate_pull_request_turnaround_time(start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')).get_json()['data']
+    
+    deployment_frequency = [d['deployments'] for d in deployment_data]
+    lead_times = [lt['total_lead_time'] for lt in lead_time_data]
+    average_turnaround_times = [tt['average_turnaround_time'] for tt in turnaround_time_data]
+    
+    metrics_map = {
+        'deployment_frequency': deployment_frequency,
+        'lead_times': lead_times,
+        'average_turnaround_time': average_turnaround_times
+    }
+    
+    main_metric_values = metrics_map.get(main_metric)
+    
+    if not main_metric_values:
+        return jsonify({"error": "Invalid main_metric provided."}), 400
+    
+    correlations = {}
+    for key, values in metrics_map.items():
+        if key != main_metric:
+            correlation_coefficient, _ = pearsonr(main_metric_values, values)
+            correlations[key] = correlation_coefficient
+    
+    return jsonify({"correlations": correlations})
 
+def calculate_deployment_frequency(start_date, end_date):
     csv_file = r'C:\Users\Jacob Wong\Documents\UCI-SAP-Capstone\DF_DD.csv'
     try:
         df = pd.read_csv(csv_file)
@@ -98,22 +139,25 @@ def deployment_frequency():
                 "week_range": f"{week_start.strftime('%Y-%m-%d')} to {week_end.strftime('%Y-%m-%d')}",
                 "deployments": weekly_count
             })
-
-        return jsonify({
-            "data": weekly_deployments,
-            "description": f"Deployment Frequency from {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}"
-        })
     except FileNotFoundError:
         return jsonify({"error": "Deployment data file not found."}), 404
     except Exception as e:
         return jsonify({"error": f"An error occurred while processing your request: {str(e)}"}), 500
+    return jsonify({
+        "data": weekly_deployments,
+        "description": f"Deployment Frequency from {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}"
+    })
 
-@bp.route('/raw_metrics/lead_time_for_changes')
-def lead_time_for_changes():
+@bp.route('/raw_metrics/deployment_frequency')
+def deployment_frequency():
     start_date = request.args.get('start_date')
     end_date = request.args.get('end_date')
     if not start_date or not end_date:
         return jsonify({"error": "Both start_date and end_date are required parameters."}), 400
+
+    return calculate_deployment_frequency(start_date, end_date)
+
+def calculate_lead_time_for_changes(start_date, end_date):
     csv_file = r'C:\Users\Jacob Wong\Documents\UCI-SAP-Capstone\LTFC_DD.csv'
 
     try:
@@ -144,13 +188,15 @@ def lead_time_for_changes():
     except Exception as e:
         return jsonify({"error": f"An error occurred while processing your request: {str(e)}"}), 500
 
-@bp.route('/raw_metrics/pull_request_turnaround_time')
-def pull_request_turnaround_time():
+@bp.route('/raw_metrics/lead_time_for_changes')
+def lead_time_for_changes():
     start_date = request.args.get('start_date')
     end_date = request.args.get('end_date')
     if not start_date or not end_date:
-        return jsonify({"error": "Both 'start_date' and 'end_date' are required parameters."}), 400
-    
+        return jsonify({"error": "Both start_date and end_date are required parameters."}), 400
+    return calculate_lead_time_for_changes(start_date, end_date)
+
+def calculate_pull_request_turnaround_time(start_date, end_date):
     csv_file = r'C:\Users\Jacob Wong\Documents\UCI-SAP-Capstone\PRTT_DD.csv'
 
     try:
@@ -192,3 +238,13 @@ def pull_request_turnaround_time():
         return jsonify({"error": "Turnaround time data file not found."}), 404
     except Exception as e:
         return jsonify({"error": f"An error occurred while processing your request: {str(e)}"}), 500
+
+
+@bp.route('/raw_metrics/pull_request_turnaround_time')
+def pull_request_turnaround_time():
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
+    if not start_date or not end_date:
+        return jsonify({"error": "Both 'start_date' and 'end_date' are required parameters."}), 400
+    
+    return calculate_pull_request_turnaround_time(start_date, end_date)

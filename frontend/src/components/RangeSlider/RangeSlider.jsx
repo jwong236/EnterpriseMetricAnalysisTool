@@ -15,6 +15,7 @@ function RangeSlider() {
   const [value, setValue] = React.useState(30);
 
   const handleSliderChange = (event, newValue) => {
+    
     setValue(newValue);
   };
 

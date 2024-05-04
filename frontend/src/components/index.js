@@ -1,3 +1,2 @@
-export {default as MyBarGraph} from './BarGraph/bargraph';
-export {default as MyLineGraph} from './LineGraph/linegraph';
-export {default as SprintRange} from './SprintRange/SprintRange';
+export { default as BarGraph } from './BarGraph/bargraph/'
+export { default as LineGraph } from './LineGraph/linegraph';

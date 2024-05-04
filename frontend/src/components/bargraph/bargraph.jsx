@@ -5,8 +5,6 @@ import {FormGroup, FormControl, FormControlLabel, Checkbox, InputLabel, Select, 
 import RangeSlider from '../RangeSlider/RangeSlider';
 import SprintRange from '../SprintRange/SprintRange';
 
-// const positive_color = '#0057D2';
-// const negative_color = '#AA0808';
 const positive_color = '#2B7D2B';
 const negative_color = '#BB0000';
 
@@ -93,8 +91,6 @@ const BarGraph = ({correlations}) => {
         </div>
 
         <div className="bar-container">
-          <RangeSlider ></RangeSlider>
-          {/* <SprintRange></SprintRange> */}
           <BarChart
             dataset={use_dataset}
             yAxis={[{ scaleType: 'band', dataKey: 'metric' }]}

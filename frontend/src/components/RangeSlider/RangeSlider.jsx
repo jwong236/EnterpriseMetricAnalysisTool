@@ -8,29 +8,30 @@ import MuiInput from '@mui/material/Input';
 import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
 
 const Input = styled(MuiInput)`
-  width: 42px;
+  width: 115px;
 `;
+
+function dateToSprintNumber(date) {
+  const startDate = new Date('2023-01-01');
+  const diffTime = Math.abs(date - startDate);
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return Math.floor(diffDays / 14) + 1;
+}
 
 function RangeSlider({ sx, range, onRangeChange }) {
   const handleSliderChange = (event, newValue) => {
-    onRangeChange(newValue);
+    onRangeChange(newValue.map(value => new Date(value)));
   };
 
   const handleInputChange = (index) => (event) => {
     const newRange = [...range];
-    newRange[index] = event.target.value === '' ? 0 : Number(event.target.value);
-    onRangeChange(newRange);
-  };
-
-  const handleBlur = (index) => () => {
-    const newRange = [...range];
-    newRange[index] = Math.max(0, Math.min(100, newRange[index]));
+    newRange[index] = new Date(event.target.value);
     onRangeChange(newRange);
   };
 
   return (
     <Box sx={sx}>
-      <Typography id="input-slider" gutterBottom component="h2">
+      <Typography id="input-slider" variant="h5">
         Sprint Range
       </Typography>
       <Grid container spacing={2} alignItems="center">
@@ -39,26 +40,23 @@ function RangeSlider({ sx, range, onRangeChange }) {
         </Grid>
         <Grid item xs>
           <Slider
-            value={range}
+            value={range.map(date => date.getTime())}
             onChange={handleSliderChange}
             valueLabelDisplay="auto"
             aria-labelledby="input-slider"
-            min={0}
-            max={100}
+            min={new Date('2023-01-01').getTime()}
+            max={new Date('2023-12-31').getTime()}
+            valueLabelFormat={date => `Sprint ${dateToSprintNumber(new Date(date))}`}
           />
         </Grid>
         {range.map((value, index) => (
           <Grid item key={index}>
             <Input
-              value={value}
-              size="small"
+              value={value.toISOString().substring(0, 10)}
               onChange={handleInputChange(index)}
-              onBlur={handleBlur(index)}
+              onBlur={() => {}}
               inputProps={{
-                step: 1,
-                min: 0,
-                max: 100,
-                type: 'number',
+                type: 'date',
                 'aria-labelledby': 'input-slider',
               }}
             />

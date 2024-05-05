@@ -13,7 +13,7 @@ const LineGraph = ({ sx, metrics }) => {
 
     return (
         <Box sx={sx}>
-            <Typography variant="h6" gutterBottom>
+            <Typography variant="h5" gutterBottom>
                 Metrics Over Time
             </Typography>
             <LineChart

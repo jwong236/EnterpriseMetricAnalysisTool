@@ -33,7 +33,7 @@ export default function MainPage() {
     { name: "Avg. Pull Request Turnaround Time", values: [12, 11, 10, 9, 8, 7, 6, 5, 4, 3] }
   ];
 
-  const [range, setRange] = useState([0, 100]);
+  const [dateRange, setDateRange] = useState([new Date('2023-01-01'), new Date('2024-05-01')]);
   const [barGraphMainMetric, setBarGraphMainMetric] = useState(metrics[0]);
   const [barGraphMetrics, setBarGraphMetrics] = useState(
     metrics.reduce((acc, metric) => ({ ...acc, [metric]: true }), {})
@@ -41,10 +41,15 @@ export default function MainPage() {
   const [lineGraphMetrics, setLineGraphMetrics] = useState(
     metrics.reduce((acc, metric) => ({ ...acc, [metric]: true }), {})
   );
+  
+  const [correlations, setCorrelations] = useState([]);
+
+
+
+  
 
   const handleRangeChange = (newRange) => {
-    console.log("New range: " + newRange);
-    setRange(newRange);
+    setDateRange(newRange);
   };
 
   const handleBarGraphMainMetricChange = (event) => {
@@ -76,7 +81,7 @@ export default function MainPage() {
   return (
     <Box sx={{ display: "flex", flexDirection: "column", backgroundColor: "#EBF8FF", alignItems: 'center'}}>
       <Typography variant= 'h3' color= 'black' sx={{margin: '2rem 1rem 1rem 1rem'}}>UCICapstone2024 Enterprise Metric Analysis Tool</Typography>
-      <RangeSlider sx={{...cardBackgroundStyle, width: '80%'}} range={range} onRangeChange={handleRangeChange} />
+      <RangeSlider sx={{...cardBackgroundStyle, width: '80%'}} range={dateRange} onRangeChange={handleRangeChange} />
       <Box sx={{ display: "flex", flexDirection: "row" }}>
         <MetricList
           sx={cardBackgroundStyle}

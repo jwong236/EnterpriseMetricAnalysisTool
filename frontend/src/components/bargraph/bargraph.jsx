@@ -6,29 +6,26 @@ const positiveColor = '#FFD700'; // Yellow for positive correlations
 const negativeColor = '#0000FF'; // Blue for negative correlations
 
 const BarGraph = ({ sx, correlations, mainMetric, comparedMetrics }) => {
-    const filteredCorrelations = correlations.filter(correlation =>
-        comparedMetrics[correlation[0]] && correlation[0] !== mainMetric
-    );
+    const correlationEntries = Object.entries(correlations.correlations || {});
 
-    const sortedCorrelations = filteredCorrelations.sort((a, b) => 
-        Math.abs(b[1]) - Math.abs(a[1])
-    );
-
-    const dataset = sortedCorrelations.map(correlation => ({
-        metric: correlation[0],
-        value: Math.abs(correlation[1]),
-        color: correlation[1] >= 0 ? positiveColor : negativeColor
-    }));
+    const processedCorrelations = correlationEntries
+        .filter(([metric, value]) => comparedMetrics[metric] && metric !== mainMetric)
+        .sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]))
+        .map(([metric, value]) => ({
+            metric,
+            value: Math.abs(value),
+            color: value >= 0 ? positiveColor : negativeColor
+        }));
 
     return (
         <Box sx={sx}>
+            <Typography variant="h6" sx={{ mb: 2 }}>{mainMetric} Correlation Against...</Typography>
             <BarChart
-                dataset={dataset}
-                yAxis={[{ scaleType: 'band', dataKey: 'metric'}]}
+                dataset={processedCorrelations}
+                yAxis={[{ scaleType: 'band', dataKey: 'metric' }]}
                 series={[{
                     dataKey: 'value',
-                    fill: 'color',
-                    label: mainMetric + ' Correlation Against...',
+                    fill: ({ datum }) => datum.color,
                     valueFormatter: (value) => `${value.toFixed(2)} units`
                 }]}
                 layout="horizontal"

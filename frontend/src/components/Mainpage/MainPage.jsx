@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Box } from "@mui/material";
-import "./MainPage.css";
 import BarGraph from "../bargraph/bargraph";
 import MetricList from "../MetricList/MetricList";
 import RangeSlider from "../RangeSlider/RangeSlider";
-
-
+import LineGraph from "../linegraph/linegraph";
 
 export default function MainPage() {
   const metrics = [
@@ -16,6 +14,7 @@ export default function MainPage() {
     "Refinement Changes",
     "Avg. Pull Request Turnaround Time",
   ];
+
   const dummyCorrelationValues = [
     ["Deployment Frequency", 0.9],
     ["Lead Time for Changes", -0.5],
@@ -23,92 +22,89 @@ export default function MainPage() {
     ["Open Issue Bug Count", -0.2],
     ["Refinement Changes", 0.1],
     ["Avg. Pull Request Turnaround Time", 0.6]
-]
+  ];
 
+  const dummyRawData = [
+    { name: "Deployment Frequency", values: [5, 10, 15, 20, 18, 16, 14, 12, 10, 8] },
+    { name: "Lead Time for Changes", values: [7, 8, 7, 6, 5, 4, 3, 4, 5, 6] },
+    { name: "Avg. Retro Mood", values: [3, 4, 5, 5, 3, 2, 4, 5, 4, 3] },
+    { name: "Open Issue Bug Count", values: [10, 9, 7, 8, 6, 5, 4, 3, 2, 1] },
+    { name: "Refinement Changes", values: [2, 2, 3, 4, 5, 5, 6, 7, 8, 9] },
+    { name: "Avg. Pull Request Turnaround Time", values: [12, 11, 10, 9, 8, 7, 6, 5, 4, 3] }
+  ];
 
   const [range, setRange] = useState([0, 100]);
-  const [mainMetric, setMainMetric] = useState(metrics[0]);
-  const [comparedMetrics, setComparedMetrics] = useState(
-    metrics.reduce((acc, metric) => {
-      acc[metric] = true;
-      return acc;
-    }, {})
+  const [barGraphMainMetric, setBarGraphMainMetric] = useState(metrics[0]);
+  const [barGraphMetrics, setBarGraphMetrics] = useState(
+    metrics.reduce((acc, metric) => ({ ...acc, [metric]: true }), {})
+  );
+  const [lineGraphMetrics, setLineGraphMetrics] = useState(
+    metrics.reduce((acc, metric) => ({ ...acc, [metric]: true }), {})
   );
 
   const handleRangeChange = (newRange) => {
-    console.log("New range: " + newRange)
+    console.log("New range: " + newRange);
     setRange(newRange);
   };
 
-  const handleMainMetricChange = (event) => {
-    setMainMetric(event.target.value);
+  const handleBarGraphMainMetricChange = (event) => {
+    setBarGraphMainMetric(event.target.value);
   };
 
-  const handleComparedMetricChange = (event) => {
-    setComparedMetrics({
-      ...comparedMetrics,
+  const handleBarGraphMetricChange = (event) => {
+    setBarGraphMetrics({
+      ...barGraphMetrics,
       [event.target.name]: event.target.checked,
     });
   };
 
-  const metricListStyles = {
-    padding: "1rem",
-    border: "1px solid #ccc",
-    borderRadius: "4px",
-    backgroundColor: "#f6f6f6",
-    margin: "1rem",
+  const handleLineGraphMetricChange = (event) => {
+    setLineGraphMetrics({
+      ...lineGraphMetrics,
+      [event.target.name]: event.target.checked,
+    });
   };
 
-  const rangePickerStyles = {
+  const cardBackgroundStyle = { 
+    margin: "1rem",
     padding: "1rem",
     border: "1px solid #ccc",
     borderRadius: "4px",
-    backgroundColor: "#f6f6f6",
-    margin: "1rem",
+    backgroundColor: "#f6f6f6"
   }
 
-  const barGraphStyle = {
-    padding: "1rem",
-    border: "1px solid #ccc",
-    borderRadius: "4px",
-    backgroundColor: "#f6f6f6",
-    margin: "1rem",
-    alignSelf: 'center'
-  }
-  
   return (
-    <Box
-      sx={{
-        display: "flex",
-        backgroundColor: "#EBF8FF",
-        height: "100vh",
-        width: "100vw",
-        flexDirection: "row",
-      }}
-    >
-      <Box sx={{ display: "flex", flexDirection: "column", flex: 1}}>
-        <RangeSlider sx= {rangePickerStyles} range={range} onRangeChange={handleRangeChange} />
+    <Box sx={{ display: "flex", flexDirection: "column", backgroundColor: "#EBF8FF" }}>
+      <RangeSlider sx={cardBackgroundStyle} range={range} onRangeChange={handleRangeChange} />
+      <Box sx={{ display: "flex", flexDirection: "row" }}>
         <MetricList
-          mainMetric={mainMetric}
-          comparedMetrics={comparedMetrics}
-          onMainMetricChange={handleMainMetricChange}
-          onComparedMetricChange={handleComparedMetricChange}
-          setComparedMetrics={setComparedMetrics}
-          sx={metricListStyles}
+          sx={cardBackgroundStyle}
+          dropDownMetric={barGraphMainMetric}
+          metrics={barGraphMetrics}
+          onDropDownMetricChange={handleBarGraphMainMetricChange}
+          onMetricChange={handleBarGraphMetricChange}
+          setMetrics={setBarGraphMetrics}
+          showDropdownMetric={true}
+        />
+        <BarGraph
+          sx={cardBackgroundStyle}
+          correlations={dummyCorrelationValues}
+          mainMetric={barGraphMainMetric}
+          comparedMetrics={barGraphMetrics}
         />
       </Box>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          flex: 3
-        }}
-      >
-        <BarGraph
-            sx={barGraphStyle}
-            correlations={dummyCorrelationValues}
-            mainMetric={mainMetric}
-            comparedMetrics={comparedMetrics}
+
+      <Box sx={{ display: "flex", flexDirection: "row" }}>
+        <MetricList
+          sx={cardBackgroundStyle}
+          metrics={lineGraphMetrics}
+          onMetricChange={handleLineGraphMetricChange}
+          setMetrics={setLineGraphMetrics}
+          showDropdownMetric={false}
+        />
+        <LineGraph
+          sx={cardBackgroundStyle}
+          metrics={dummyRawData}
         />
       </Box>
     </Box>

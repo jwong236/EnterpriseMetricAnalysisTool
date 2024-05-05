@@ -1,8 +1,16 @@
 import React from 'react';
 import { Box, Typography, FormControl, Select, MenuItem, FormGroup, FormControlLabel, Checkbox } from '@mui/material';
 
-export default function MetricList({ sx, mainMetric, comparedMetrics, onMainMetricChange, onComparedMetricChange, setComparedMetrics }) {
-    const metrics = [
+export default function MetricList({
+    sx,
+    dropDownMetric,
+    metrics,
+    onDropDownMetricChange,
+    onMetricChange,
+    setMetrics,
+    showDropdownMetric = true
+}) {
+    const metricOptions = [
         "Deployment Frequency",
         "Lead Time for Changes",
         "Avg. Retro Mood",
@@ -11,65 +19,60 @@ export default function MetricList({ sx, mainMetric, comparedMetrics, onMainMetr
         "Avg. Pull Request Turnaround Time"
     ];
 
-    const isAllSelected = metrics.every(metric => metric === mainMetric || comparedMetrics[metric]);
+    const isAllSelected = metricOptions.every(metric => metrics[metric]);
 
     const handleAllChecked = (event) => {
-        const newComparedMetrics = { ...comparedMetrics };
-        metrics.forEach(metric => {
-            if (metric !== mainMetric) {
-                newComparedMetrics[metric] = event.target.checked;
-            }
+        const newMetrics = { ...metrics };
+        metricOptions.forEach(metric => {
+            newMetrics[metric] = event.target.checked;
         });
-        setComparedMetrics(newComparedMetrics);
+        setMetrics(newMetrics);
     };
 
     return (
         <Box sx={sx}>
             <Typography variant="h4" gutterBottom>
-                Metric List
+                Metrics
             </Typography>
-            <Typography variant="h6" gutterBottom>
-                Main Metric
-            </Typography>
-            <FormControl fullWidth>
-                <Select
-                    value={mainMetric}
-                    onChange={onMainMetricChange}
-                >
-                    {metrics.map(metric => (
-                        <MenuItem key={metric} value={metric}>{metric}</MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
-            <Typography variant="h6" gutterBottom sx={{ marginTop: 2 }}>
-                Compared Metrics
-            </Typography>
+            {showDropdownMetric && (
+                <FormControl fullWidth>
+                    <Select
+                        value={dropDownMetric}
+                        onChange={onDropDownMetricChange}
+                        displayEmpty
+                    >
+                        {metricOptions.map(metric => (
+                            <MenuItem key={metric} value={metric}>{metric}</MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+            )}
             <FormGroup>
                 <FormControlLabel
                     control={
                         <Checkbox
                             checked={isAllSelected}
                             onChange={handleAllChecked}
-                            indeterminate={!isAllSelected && metrics.some(metric => comparedMetrics[metric])}
+                            indeterminate={!isAllSelected && metricOptions.some(metric => metrics[metric])}
                         />
                     }
-                    label="All"
+                    label="Select All"
                 />
-                {metrics.map(metric => (
+                {metricOptions.map(metric => (
                     <FormControlLabel
                         key={metric}
                         control={
                             <Checkbox
-                                checked={comparedMetrics[metric]}
-                                onChange={onComparedMetricChange}
+                                checked={metrics[metric]}
+                                onChange={onMetricChange}
                                 name={metric}
-                                disabled={metric === mainMetric}
+                                disabled={metric === dropDownMetric && showDropdownMetric}
                             />
                         }
                         label={metric}
                         sx={{
-                            color: metric === mainMetric ? 'grey.500' : 'inherit',
-                            textDecoration: metric === mainMetric ? 'line-through' : 'none'
+                            color: metric === dropDownMetric && showDropdownMetric ? 'grey.500' : 'inherit',
+                            textDecoration: metric === dropDownMetric && showDropdownMetric ? 'line-through' : 'none'
                         }}
                     />
                 ))}

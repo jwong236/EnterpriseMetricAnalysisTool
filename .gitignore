@@ -1,4 +1,6 @@
 .env
 .env.local
-
+env/
+*.csv
 __pycache__
+.idea

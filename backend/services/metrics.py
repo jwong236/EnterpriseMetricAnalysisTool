@@ -1,7 +1,9 @@
-
 from flask import jsonify
 import pandas as pd
 import models.constants as constants
+import os
+
+CSV_DIR = os.getcwd()
 
 
 def fetch_data_from_csv(csv_file):
@@ -32,7 +34,7 @@ def adjust_date_range(start_date, end_date, start_day):
 
 
 def calculate_lead_time_for_changes(start_date, end_date):
-    csv_file = r'C:\Users\Jacob Wong\Documents\UCI-SAP-Capstone\LTFC_DD.csv'
+    csv_file = os.path.join(CSV_DIR, "scripts", "LTFC_DD.csv")
 
     try:
         df = pd.read_csv(csv_file)
@@ -64,7 +66,7 @@ def calculate_lead_time_for_changes(start_date, end_date):
     
 
 def calculate_deployment_frequency(start_date, end_date):
-    csv_file = r'C:\Users\Jacob Wong\Documents\UCI-SAP-Capstone\DF_DD.csv'
+    csv_file = os.path.join(CSV_DIR, "scripts", "DF_DD.csv")
     try:
         df = pd.read_csv(csv_file)
         df['Day'] = pd.to_datetime(df['Day'])

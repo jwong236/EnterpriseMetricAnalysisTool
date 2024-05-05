@@ -11,7 +11,7 @@ const Input = styled(MuiInput)`
   width: 42px;
 `;
 
-function RangeSlider({ range, onRangeChange }) {
+function RangeSlider({ sx, range, onRangeChange }) {
   const handleSliderChange = (event, newValue) => {
     onRangeChange(newValue);
   };
@@ -24,18 +24,14 @@ function RangeSlider({ range, onRangeChange }) {
 
   const handleBlur = (index) => () => {
     const newRange = [...range];
-    if (newRange[index] < 0) {
-      newRange[index] = 0;
-    } else if (newRange[index] > 100) {
-      newRange[index] = 100;
-    }
+    newRange[index] = Math.max(0, Math.min(100, newRange[index]));
     onRangeChange(newRange);
   };
 
   return (
-    <Box sx={{ width: 300 }}>
-      <Typography id="input-slider" gutterBottom>
-        <h2>Sprint Range</h2>
+    <Box sx={sx}>
+      <Typography id="input-slider" gutterBottom component="h2">
+        Sprint Range
       </Typography>
       <Grid container spacing={2} alignItems="center">
         <Grid item>
@@ -46,7 +42,7 @@ function RangeSlider({ range, onRangeChange }) {
             value={range}
             onChange={handleSliderChange}
             valueLabelDisplay="auto"
-            aria-labelledby="range-slider"
+            aria-labelledby="input-slider"
             min={0}
             max={100}
           />

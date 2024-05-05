@@ -1,109 +1,43 @@
-import React, {useState} from 'react';
-import './bargraph.css';
-import {BarChart} from '@mui/x-charts/BarChart';
-import {FormGroup, FormControl, FormControlLabel, Checkbox, InputLabel, Select, MenuItem, Slider, Box} from '@mui/material';
-import RangeSlider from '../RangeSlider/RangeSlider';
-import SprintRange from '../SprintRange/SprintRange';
+import React from 'react';
+import { BarChart } from '@mui/x-charts/BarChart';
+import { Box, Typography } from '@mui/material';
 
-const positive_color = '#2B7D2B';
-const negative_color = '#BB0000';
+const positiveColor = '#FFD700'; // Yellow for positive correlations
+const negativeColor = '#0000FF'; // Blue for negative correlations
 
-const BarGraph = ({correlations}) => {
-    // Turn correlations, which is an array of arrays, into an map with keys metric name and value of correlation against (selected metric)
-    // Will change in the future when we figure out our data format
-    const dataset = correlations.map((metric) => {
-      return { 
-        metric: metric[0], 
-        positive_correlation: metric[1] < 0 ? 0 : metric[1], 
-        negative_correlation: metric[1] > 0 ? 0 : -metric[1]
-      }
-    })
-    
-    // Sort the correlation based on correlation magnitude. 
-    const sorted_dataset = dataset.sort((a, b) => {
-        let aval = a.positive_correlation ? a.positive_correlation : a.negative_correlation;
-        let bval = b.positive_correlation ? b.positive_correlation : b.negative_correlation;
-        return aval < bval? 1 : -1;
-    })
-
-    // used to set the current metric we're comparing against
-    const [metric, setMetric] = useState('');
-
-    const handleChange = (event) => {
-      setMetric(event.target.value);
-    };
-    
-    let states = {}
-    for (let data of dataset) {
-      states[data.metric] = true
-    }
-    // used to keep track of which metrics to compare against the selected metric
-    const [state, setState] = useState(states);
-
-    const filtered_dataset = sorted_dataset.filter((data) => { // filter out the metrics that are not selected based on state objects
-      return state[data.metric] && data.metric !== metric
-    })
-    const empty_data = [{metric: "No Metrics Selected", "positive_correlation": 1, "negative_correlation": 1}]
-    const use_dataset = filtered_dataset.length ? filtered_dataset : empty_data;  // if no metrics are selected, use empty data
-
-    // handle checkbox changes
-    const handleChecks = (event) => { 
-      setState({ 
-        ...state, 
-        [event.target.name]: event.target.checked
-      });
-    }
-    
-    // Create checkboxes for each metric
-    const checkboxes = sorted_dataset.map((data) => {
-        return <FormControlLabel 
-        key={data.metric} 
-        control={<Checkbox disabled={data.metric === metric} />} 
-        checked={state[data.metric]} 
-        onChange={handleChecks} 
-        name={data.metric} 
-        label={data.metric} />
-    })
-    
-    // Creates dropdown items
-    const dropdowns = sorted_dataset.map((data) => {
-        return <MenuItem key={data.metric} value={data.metric}>{data.metric}</MenuItem>
-    })
-    
-    return (
-      <div className="bar-chart-container">
-        <div className="metrics-container">
-          <h2>Target Metrics</h2>    
-            <FormControl fullWidth>
-              <InputLabel>Metric</InputLabel>
-              <Select
-                value={metric}
-                label="Metric"
-                onChange={handleChange}
-              >
-                {dropdowns}
-              </Select>
-            </FormControl>
-          <h2>Comparison Metrics </h2>
-          <FormGroup>
-            {checkboxes}
-          </FormGroup>
-        </div>
-
-        <div className="bar-container">
-          <BarChart
-            dataset={use_dataset}
-            yAxis={[{ scaleType: 'band', dataKey: 'metric' }]}
-            series={[{ dataKey: 'positive_correlation', label: 'Positive Correlation', color: positive_color, stack: 'total'},
-                    { dataKey: 'negative_correlation', label: 'Negative Correlation', color: negative_color, stack: 'total'}]}
-            layout="horizontal"
-            height={400}
-            width={600}
-            margin={{left: 300}}
-          />
-        </div>
-      </div>
+const BarGraph = ({ sx, correlations, mainMetric, comparedMetrics }) => {
+    const filteredCorrelations = correlations.filter(correlation =>
+        comparedMetrics[correlation[0]] && correlation[0] !== mainMetric
     );
-}
+
+    const sortedCorrelations = filteredCorrelations.sort((a, b) => 
+        Math.abs(b[1]) - Math.abs(a[1])
+    );
+
+    const dataset = sortedCorrelations.map(correlation => ({
+        metric: correlation[0],
+        value: Math.abs(correlation[1]),
+        color: correlation[1] >= 0 ? positiveColor : negativeColor
+    }));
+
+    return (
+        <Box sx={sx}>
+            <BarChart
+                dataset={dataset}
+                yAxis={[{ scaleType: 'band', dataKey: 'metric'}]}
+                series={[{
+                    dataKey: 'value',
+                    fill: 'color',
+                    label: mainMetric + ' Correlation Against...',
+                    valueFormatter: (value) => `${value.toFixed(2)} units`
+                }]}
+                layout="horizontal"
+                width={800}
+                height={500}
+                margin={{ left: 210 }}
+            />
+        </Box>
+    );
+};
 
 export default BarGraph;

@@ -94,7 +94,7 @@ def calculate_deployment_frequency(start_date, end_date):
 
 
 def calculate_pull_request_turnaround_time(start_date, end_date):
-    csv_file = r'C:\Users\Jacob Wong\Documents\UCI-SAP-Capstone\PRTT_DD.csv'
+    csv_file = os.path.join(CSV_DIR, "scripts", "PRTT_DD.csv")
 
     try:
         df = pd.read_csv(csv_file)

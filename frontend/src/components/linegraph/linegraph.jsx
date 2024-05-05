@@ -3,7 +3,6 @@ import { LineChart } from '@mui/x-charts/LineChart';
 import { Box, Typography } from '@mui/material';
 
 const LineGraph = ({ sx, metrics }) => {
-  console.log(metrics)
     const maxXAxisValue = metrics.reduce((max, metric) => Math.max(max, metric.values.length), 0);
     const xAxisData = Array.from({ length: maxXAxisValue }, (_, i) => i + 1);
 
@@ -20,11 +19,11 @@ const LineGraph = ({ sx, metrics }) => {
             <LineChart
                 series={series}
                 yAxis={[{ label: 'Metric Value' }]}
-                xAxis={[{ data: xAxisData, label: 'Sprint Number' }]}
+                xAxis={[{ data: xAxisData, label: 'Sprint Number'}]}
                 layout="horizontal"
                 height={400}
-                width={600}
-                margin={{ top: 120, right: 100, bottom: 20, left: 40 }}
+                width={1300}
+                margin={{ top: 120, right: 100, bottom: 40, left: 40 }}
                 
             />
         </Box>

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import BarGraph from "../bargraph/bargraph";
 import MetricList from "../MetricList/MetricList";
 import RangeSlider from "../RangeSlider/RangeSlider";
@@ -74,8 +74,9 @@ export default function MainPage() {
   }
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", backgroundColor: "#EBF8FF" }}>
-      <RangeSlider sx={cardBackgroundStyle} range={range} onRangeChange={handleRangeChange} />
+    <Box sx={{ display: "flex", flexDirection: "column", backgroundColor: "#EBF8FF", alignItems: 'center'}}>
+      <Typography variant= 'h3' color= 'black' sx={{margin: '2rem 1rem 1rem 1rem'}}>UCICapstone2024 Enterprise Metric Analysis Tool</Typography>
+      <RangeSlider sx={{...cardBackgroundStyle, width: '80%'}} range={range} onRangeChange={handleRangeChange} />
       <Box sx={{ display: "flex", flexDirection: "row" }}>
         <MetricList
           sx={cardBackgroundStyle}

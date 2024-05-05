@@ -32,7 +32,7 @@ const BarGraph = ({ sx, correlations, mainMetric, comparedMetrics }) => {
                     valueFormatter: (value) => `${value.toFixed(2)} units`
                 }]}
                 layout="horizontal"
-                width={800}
+                width={1300}
                 height={500}
                 margin={{ left: 210 }}
             />

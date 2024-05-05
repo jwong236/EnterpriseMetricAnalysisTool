@@ -1,19 +1,5 @@
 body {
-  background-color: #FFFFFFD9;
-}
-
-.center-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.title{
-  text-align: center;
-}
-
-.range-slider{
-  display: flex;
-  flex-direction: row;
-  margin-left: 680px;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }

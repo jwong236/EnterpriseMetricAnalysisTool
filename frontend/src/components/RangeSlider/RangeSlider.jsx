@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -11,28 +11,29 @@ const Input = styled(MuiInput)`
   width: 42px;
 `;
 
-function RangeSlider() {
-  const [value, setValue] = React.useState(30);
-
+function RangeSlider({ range, onRangeChange }) {
   const handleSliderChange = (event, newValue) => {
-    
-    setValue(newValue);
+    onRangeChange(newValue);
   };
 
-  const handleInputChange = (event) => {
-    setValue(event.target.value === '' ? 0 : Number(event.target.value));
+  const handleInputChange = (index) => (event) => {
+    const newRange = [...range];
+    newRange[index] = event.target.value === '' ? 0 : Number(event.target.value);
+    onRangeChange(newRange);
   };
 
-  const handleBlur = () => {
-    if (value < 0) {
-      setValue(0);
-    } else if (value > 100) {
-      setValue(100);
+  const handleBlur = (index) => () => {
+    const newRange = [...range];
+    if (newRange[index] < 0) {
+      newRange[index] = 0;
+    } else if (newRange[index] > 100) {
+      newRange[index] = 100;
     }
+    onRangeChange(newRange);
   };
 
   return (
-    <Box sx={{ width: 600 }}>
+    <Box sx={{ width: 300 }}>
       <Typography id="input-slider" gutterBottom>
         <h2>Sprint Range</h2>
       </Typography>
@@ -42,26 +43,31 @@ function RangeSlider() {
         </Grid>
         <Grid item xs>
           <Slider
-            value={typeof value === 'number' ? value : 0}
+            value={range}
             onChange={handleSliderChange}
-            aria-labelledby="input-slider"
+            valueLabelDisplay="auto"
+            aria-labelledby="range-slider"
+            min={0}
+            max={100}
           />
         </Grid>
-        <Grid item>
-          <Input
-            value={value}
-            size="small"
-            onChange={handleInputChange}
-            onBlur={handleBlur}
-            inputProps={{
-              step: 1,
-              min: 0,
-              max: 10,
-              type: 'number',
-              'aria-labelledby': 'input-slider',
-            }}
-          />
-        </Grid>
+        {range.map((value, index) => (
+          <Grid item key={index}>
+            <Input
+              value={value}
+              size="small"
+              onChange={handleInputChange(index)}
+              onBlur={handleBlur(index)}
+              inputProps={{
+                step: 1,
+                min: 0,
+                max: 100,
+                type: 'number',
+                'aria-labelledby': 'input-slider',
+              }}
+            />
+          </Grid>
+        ))}
       </Grid>
     </Box>
   );

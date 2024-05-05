@@ -34,6 +34,43 @@ function App() {
   const [endDate, setEndDate] = useState(new Date());
   const [correlations, setCorrelations] = useState([]);
 
+    const [mainMetric, setMainMetric] = useState("deployment_frequency");
+    const [deploymentData, setDeploymentData] = useState([])
+    const fetchRawData = async (startDate, endDate) => {
+        let start_date = new Date("Thu May 05 2023 00:29:52 GMT-0700 (Pacific Daylight Time)");
+        let end_date = new Date();
+        start_date = start_date.toISOString().slice(0,10);
+        end_date = end_date.toISOString().slice(0,10);
+        const response = await fetch(`http://localhost:5000/v1/raw_metrics/${mainMetric}?start_date=${start_date}&end_date=${end_date}`);
+        const data = await response.json();
+        let rawMetricData = [];
+        switch (mainMetric){
+            case "deployment_frequency":
+                for (let i = 0; i < data["data"].length; i++){
+                    rawMetricData.push(data["data"][i]["deployments"])
+                }
+                setDeploymentData(rawMetricData)
+                break;
+            // more cases
+        }
+    };
+
+    const fetchCorrelations = async (startDate, endDate) => {
+        let start_date = new Date("Thu May 05 2023 00:29:52 GMT-0700 (Pacific Daylight Time)");
+        let end_date = new Date();
+        start_date = start_date.toISOString().slice(0,10);
+        end_date = end_date.toISOString().slice(0,10);
+        const response = await fetch(
+            `http://localhost:5000/v1/correlation?start_date=${start_date}&end_date=${end_date}&main_metric=${mainMetric}`
+        );
+        const data = await response.json();
+        console.log(data)
+        const correlations = Object.entries(data["correlations"]).map(([key, value]) => {
+            return [key, value];
+        });
+        setCorrelations(correlations);
+    };
+
   // const fetchData = async (startDate, endDate) => {
   //   // const response = await fetch(``);
   //   //const data = await response.json();
@@ -58,7 +95,7 @@ function App() {
     return (endDay - startDay) > 10; // Change this based on your specific needs
   };
   useEffect(() => {
-    mockDataFetch();
+    fetchCorrelations();
   }, [startDate, endDate])
   
   

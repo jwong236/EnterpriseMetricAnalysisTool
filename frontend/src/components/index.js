@@ -1,2 +1,2 @@
-export {default as MyBarGraph} from './bargraph/bargraph';
-export {default as MyLineGraph} from './linegraph/linegraph';
+export { default as BarGraph } from './bargraph/bargraph.jsx'
+export { default as LineGraph } from './linegraph/linegraph.jsx';

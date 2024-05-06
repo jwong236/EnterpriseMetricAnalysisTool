@@ -1,0 +1,203 @@
+{
+    "Sprint1": {
+      "Refinement Changes": {
+        "Correlation": 0.250000
+      },
+      "Deployment Frequency": {
+        "Correlation": -0.880000
+      },
+      "Lead Time for Changes": {
+        "Correlation": 0.450000
+      },
+      "Avg. Pull Request Pickup Time": {
+        "Correlation": -0.130000
+      },
+      "Avg. Retro Mood": {
+        "Correlation": 0.350000
+      },
+      "Open Issue Bug Count": {
+        "Correlation": -0.230000
+      }
+    },
+    "Sprint2": {
+      "Refinement Changes": {
+        "Correlation": -0.570000
+      },
+      "Deployment Frequency": {
+        "Correlation": 0.670000
+      },
+      "Lead Time for Changes": {
+        "Correlation": -0.780000
+      },
+      "Avg. Pull Request Pickup Time": {
+        "Correlation": 0.880000
+      },
+      "Avg. Retro Mood": {
+        "Correlation": -0.900000
+      },
+      "Open Issue Bug Count": {
+        "Correlation": 0.020000
+      }
+    },
+    "Sprint3": {
+      "Refinement Changes": {
+        "Correlation": 0.540000
+      },
+      "Deployment Frequency": {
+        "Correlation": -0.420000
+      },
+      "Lead Time for Changes": {
+        "Correlation": 0.320000
+      },
+      "Avg. Pull Request Pickup Time": {
+        "Correlation": -0.220000
+      },
+      "Avg. Retro Mood": {
+        "Correlation": 0.100000
+      },
+      "Open Issue Bug Count": {
+        "Correlation": -0.100000
+      }
+    },
+    "Sprint4": {
+      "Refinement Changes": {
+        "Correlation": 0.870000
+      },
+      "Deployment Frequency": {
+        "Correlation": -0.760000
+      },
+      "Lead Time for Changes": {
+        "Correlation": 0.650000
+      },
+      "Avg. Pull Request Pickup Time": {
+        "Correlation": -0.540000
+      },
+      "Avg. Retro Mood": {
+        "Correlation": 0.430000
+      },
+      "Open Issue Bug Count": {
+        "Correlation": -0.320000
+      }
+    },
+    "Sprint5": {
+      "Refinement Changes": {
+        "Correlation": 0.220000
+      },
+      "Deployment Frequency": {
+        "Correlation": -0.100000
+      },
+      "Lead Time for Changes": {
+        "Correlation": 0.100000
+      },
+      "Avg. Pull Request Pickup Time": {
+        "Correlation": -0.980000
+      },
+      "Avg. Retro Mood": {
+        "Correlation": 0.870000
+      },
+      "Open Issue Bug Count": {
+        "Correlation": -0.760000
+      }
+    },
+    "Sprint6": {
+      "Refinement Changes": {
+        "Correlation": 0.650000
+      },
+      "Deployment Frequency": {
+        "Correlation": -0.540000
+      },
+      "Lead Time for Changes": {
+        "Correlation": 0.430000
+      },
+      "Avg. Pull Request Pickup Time": {
+        "Correlation": -0.320000
+      },
+      "Avg. Retro Mood": {
+        "Correlation": 0.210000
+      },
+      "Open Issue Bug Count": {
+        "Correlation": -0.110000
+      }
+    },
+    "Sprint7": {
+      "Refinement Changes": {
+        "Correlation": 0.110000
+      },
+      "Deployment Frequency": {
+        "Correlation": -0.980000
+      },
+      "Lead Time for Changes": {
+        "Correlation": 0.870000
+      },
+      "Avg. Pull Request Pickup Time": {
+        "Correlation": -0.760000
+      },
+      "Avg. Retro Mood": {
+        "Correlation": 0.650000
+      },
+      "Open Issue Bug Count": {
+        "Correlation": -0.540000
+      }
+    },
+    "Sprint8": {
+      "Refinement Changes": {
+        "Correlation": 0.430000
+      },
+      "Deployment Frequency": {
+        "Correlation": -0.320000
+      },
+      "Lead Time for Changes": {
+        "Correlation": 0.210000
+      },
+      "Avg. Pull Request Pickup Time": {
+        "Correlation": -0.110000
+      },
+      "Avg. Retro Mood": {
+        "Correlation": 0.980000
+      },
+      "Open Issue Bug Count": {
+        "Correlation": -0.870000
+      }
+    },
+    "Sprint9": {
+      "Refinement Changes": {
+        "Correlation": 0.760000
+      },
+      "Deployment Frequency": {
+        "Correlation": -0.650000
+      },
+      "Lead Time for Changes": {
+        "Correlation": 0.540000
+      },
+      "Avg. Pull Request Pickup Time": {
+        "Correlation": -0.430000
+      },
+      "Avg. Retro Mood": {
+        "Correlation": 0.320000
+      },
+      "Open Issue Bug Count": {
+        "Correlation": -0.210000
+      }
+    },
+    "Sprint10": {
+      "Refinement Changes": {
+        "Correlation": 0.110000
+      },
+      "Deployment Frequency": {
+        "Correlation": -0.980000
+      },
+      "Lead Time for Changes": {
+        "Correlation": 0.870000
+      },
+      "Avg. Pull Request Pickup Time": {
+        "Correlation": -0.760000
+      },
+      "Avg. Retro Mood": {
+        "Correlation": 0.650000
+      },
+      "Open Issue Bug Count": {
+        "Correlation": -0.540000
+      }
+    }
+  }
+  

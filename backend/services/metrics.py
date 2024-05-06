@@ -2,6 +2,7 @@ from flask import jsonify
 import pandas as pd
 import models.constants as constants
 import os
+import random
 
 CSV_DIR = os.getcwd()
 
@@ -32,6 +33,33 @@ def adjust_date_range(start_date, end_date, start_day):
 
     return start_date, end_date
 
+def calculate_metric(start_date, end_date, metric_name):
+    """
+    Generic function to calculate metrics with random data generation.
+    """
+    start_date, end_date = adjust_date_range(start_date, end_date, constants.WEEK_START_DAY)
+    weeks = pd.date_range(start=start_date, end=end_date + pd.Timedelta(days=1), freq=f'W-{constants.WEEK_START_DAY[:3].upper()}')
+    data = [{
+        "week_range": f"{week.strftime('%Y-%m-%d')} to {(week + pd.Timedelta(days=6)).strftime('%Y-%m-%d')}",
+        metric_name: random.choice([2, 3, 6])
+    } for week in weeks[:-1]]
+
+    return {
+        "data": data,
+        "description": f"{metric_name} from {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}"
+    }
+
+def calculate_average_blocked_task_time(start_date, end_date):
+    return calculate_metric(start_date, end_date, "average_blocked_task_time")
+
+def calculate_average_retro_mood(start_date, end_date):
+    return calculate_metric(start_date, end_date, "average_retro_mood")
+
+def calculate_average_open_issue_bug_count(start_date, end_date):
+    return calculate_metric(start_date, end_date, "average_open_issue_bug_count")
+
+def calculate_refinement_changes_count(start_date, end_date):
+    return calculate_metric(start_date, end_date, "refinement_changes_count")
 
 def calculate_lead_time_for_changes(start_date, end_date):
     csv_file = os.path.join(CSV_DIR, "scripts", "LTFC_DD.csv")

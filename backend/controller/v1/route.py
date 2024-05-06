@@ -117,3 +117,47 @@ def pull_request_turnaround_time():
         return jsonify({"error": "Both 'start_date' and 'end_date' are required parameters."}), 400
     
     return service.calculate_pull_request_turnaround_time(start_date, end_date)
+
+
+
+
+
+@bp.route('/raw_metrics/average_blocked_task_time')
+def average_blocked_task_time():
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
+    if not start_date or not end_date:
+        return jsonify({"error": "Both start_date and end_date are required parameters."}), 400
+
+    data = service.calculate_average_blocked_task_time(start_date, end_date)
+    return jsonify(data)
+
+@bp.route('/raw_metrics/average_retro_mood')
+def average_retro_mood():
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
+    if not start_date or not end_date:
+        return jsonify({"error": "Both start_date and end_date are required parameters."}), 400
+
+    data = service.calculate_average_retro_mood(start_date, end_date)
+    return jsonify(data)
+
+@bp.route('/raw_metrics/average_open_issue_bug_count')
+def average_open_issue_bug_count():
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
+    if not start_date or not end_date:
+        return jsonify({"error": "Both start_date and end_date are required parameters."}), 400
+
+    data = service.calculate_average_open_issue_bug_count(start_date, end_date)
+    return jsonify(data)
+
+@bp.route('/raw_metrics/refinement_changes_count')
+def refinement_changes_count():
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
+    if not start_date or not end_date:
+        return jsonify({"error": "Both start_date and end_date are required parameters."}), 400
+
+    data = service.calculate_refinement_changes_count(start_date, end_date)
+    return jsonify(data)

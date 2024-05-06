@@ -40,7 +40,43 @@ def raw_metrics_index():
             "pull_request_turnaround_time": {
                 "route": "/v1/raw_metrics/pull_request_turnaround_time",
                 "method": "GET",
-                "description": "Get pull request turnaround_time for PRs between start and end dates.",
+                "description": "Get pull request turnaround time for PRs between start and end dates.",
+                "parameters": {
+                    "start_date": "YYYY-MM-DD",
+                    "end_date": "YYYY-MM-DD"
+                }
+            },
+            "average_blocked_task_time": {
+                "route": "/v1/raw_metrics/average_blocked_task_time",
+                "method": "GET",
+                "description": "Get average blocked task time per week between start and end dates.",
+                "parameters": {
+                    "start_date": "YYYY-MM-DD",
+                    "end_date": "YYYY-MM-DD"
+                }
+            },
+            "average_retro_mood": {
+                "route": "/v1/raw_metrics/average_retro_mood",
+                "method": "GET",
+                "description": "Get average retrospective mood score per week between start and end dates.",
+                "parameters": {
+                    "start_date": "YYYY-MM-DD",
+                    "end_date": "YYYY-MM-DD"
+                }
+            },
+            "average_open_issue_bug_count": {
+                "route": "/v1/raw_metrics/average_open_issue_bug_count",
+                "method": "GET",
+                "description": "Get average open issue bug count per week between start and end dates.",
+                "parameters": {
+                    "start_date": "YYYY-MM-DD",
+                    "end_date": "YYYY-MM-DD"
+                }
+            },
+            "refinement_changes_count": {
+                "route": "/v1/raw_metrics/refinement_changes_count",
+                "method": "GET",
+                "description": "Get count of refinement changes per week between start and end dates.",
                 "parameters": {
                     "start_date": "YYYY-MM-DD",
                     "end_date": "YYYY-MM-DD"
@@ -50,43 +86,66 @@ def raw_metrics_index():
     })
 
 
+
+
 @bp.route('/correlation', methods=['GET'])
 def correlation():
     start_date = request.args.get('start_date')
     end_date = request.args.get('end_date')
     main_metric = request.args.get('main_metric')
     
-    if not (start_date and end_date and main_metric):
-        return jsonify({"error": "Required parameters are missing."}), 400
+    if not (start_date, end_date, main_metric):
+        return jsonify({"error": "Required parameters: start_date, end_date, and main_metric are missing."}), 400
     
+    # Adjusting date range according to the start day of the week
     start_date, end_date = service.adjust_date_range(start_date, end_date, constants.WEEK_START_DAY)
     
-    deployment_data = service.calculate_deployment_frequency(start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')).get_json()['data']
-    lead_time_data = service.calculate_lead_time_for_changes(start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')).get_json()['data']
-    turnaround_time_data = service.calculate_pull_request_turnaround_time(start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')).get_json()['data']
+    try:
+        # Fetching the data for all metrics and extracting JSON from the response
+        deployment_response = service.calculate_deployment_frequency(start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d'))
+        lead_time_response = service.calculate_lead_time_for_changes(start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d'))
+        turnaround_time_response = service.calculate_pull_request_turnaround_time(start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d'))
+        blocked_task_time_response = service.calculate_average_blocked_task_time(start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d'))
+        retro_mood_response = service.calculate_average_retro_mood(start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d'))
+        open_issue_bug_count_response = service.calculate_average_open_issue_bug_count(start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d'))
+        refinement_changes_response = service.calculate_refinement_changes_count(start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d'))
+
+        deployment_data = deployment_response.get_json()['data']
+        lead_time_data = lead_time_response.get_json()['data']
+        turnaround_time_data = turnaround_time_response.get_json()['data']
+        blocked_task_time_data = blocked_task_time_response.get_json()['data']
+        retro_mood_data = retro_mood_response.get_json()['data']
+        open_issue_bug_count_data = open_issue_bug_count_response.get_json()['data']
+        refinement_changes_data = refinement_changes_response.get_json()['data']
+
+    except Exception as e:
+        return jsonify({"error": f"Failed to fetch data: {str(e)}"}), 500
     
-    deployment_frequency = [d['deployments'] for d in deployment_data]
-    lead_times = [lt['total_lead_time'] for lt in lead_time_data]
-    average_turnaround_times = [tt['average_turnaround_time'] for tt in turnaround_time_data]
-    
+    # Extract data points
     metrics_map = {
-        'deployment_frequency': deployment_frequency,
-        'lead_times': lead_times,
-        'average_turnaround_time': average_turnaround_times
+        'deployment_frequency': [d['deployments'] for d in deployment_data],
+        'lead_time_for_changes': [lt['total_lead_time'] for lt in lead_time_data],
+        'average_turnaround_time': [tt['average_turnaround_time'] for tt in turnaround_time_data],
+        'average_blocked_task_time': [bt['average_blocked_task_time'] for bt in blocked_task_time_data],
+        'average_retro_mood': [rm['average_retro_mood'] for rm in retro_mood_data],
+        'average_open_issue_bug_count': [bc['average_open_issue_bug_count'] for bc in open_issue_bug_count_data],
+        'refinement_changes_count': [rc['refinement_changes_count'] for rc in refinement_changes_data]
     }
     
+    # Validate main metric
     main_metric_values = metrics_map.get(main_metric)
-    
     if not main_metric_values:
-        return jsonify({"error": "Invalid main_metric provided."}), 400
+        return jsonify({"error": f"Invalid main_metric provided: {main_metric}. Choose from {list(metrics_map.keys())}."}), 400
     
+    # Calculate correlations
     correlations = {}
     for key, values in metrics_map.items():
-        if key != main_metric:
+        if key != main_metric and len(values) > 1:
             correlation_coefficient, _ = pearsonr(main_metric_values, values)
             correlations[key] = correlation_coefficient
     
     return jsonify({"correlations": correlations})
+
 
 
 @bp.route('/raw_metrics/deployment_frequency')
@@ -129,8 +188,8 @@ def average_blocked_task_time():
     if not start_date or not end_date:
         return jsonify({"error": "Both start_date and end_date are required parameters."}), 400
 
-    data = service.calculate_average_blocked_task_time(start_date, end_date)
-    return jsonify(data)
+    return service.calculate_average_blocked_task_time(start_date, end_date)
+    
 
 @bp.route('/raw_metrics/average_retro_mood')
 def average_retro_mood():
@@ -139,8 +198,7 @@ def average_retro_mood():
     if not start_date or not end_date:
         return jsonify({"error": "Both start_date and end_date are required parameters."}), 400
 
-    data = service.calculate_average_retro_mood(start_date, end_date)
-    return jsonify(data)
+    return service.calculate_average_retro_mood(start_date, end_date)
 
 @bp.route('/raw_metrics/average_open_issue_bug_count')
 def average_open_issue_bug_count():
@@ -149,8 +207,7 @@ def average_open_issue_bug_count():
     if not start_date or not end_date:
         return jsonify({"error": "Both start_date and end_date are required parameters."}), 400
 
-    data = service.calculate_average_open_issue_bug_count(start_date, end_date)
-    return jsonify(data)
+    return service.calculate_average_open_issue_bug_count(start_date, end_date)
 
 @bp.route('/raw_metrics/refinement_changes_count')
 def refinement_changes_count():
@@ -159,5 +216,4 @@ def refinement_changes_count():
     if not start_date or not end_date:
         return jsonify({"error": "Both start_date and end_date are required parameters."}), 400
 
-    data = service.calculate_refinement_changes_count(start_date, end_date)
-    return jsonify(data)
+    return service.calculate_refinement_changes_count(start_date, end_date)

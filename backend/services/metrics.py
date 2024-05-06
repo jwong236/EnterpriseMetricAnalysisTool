@@ -44,10 +44,10 @@ def calculate_metric(start_date, end_date, metric_name):
         metric_name: random.choice([2, 3, 6])
     } for week in weeks[:-1]]
 
-    return {
+    return jsonify({
         "data": data,
         "description": f"{metric_name} from {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}"
-    }
+    })
 
 def calculate_average_blocked_task_time(start_date, end_date):
     return calculate_metric(start_date, end_date, "average_blocked_task_time")

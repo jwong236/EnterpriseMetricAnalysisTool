@@ -5,6 +5,17 @@ import MetricList from "../MetricList/MetricList";
 import RangeSlider from "../RangeSlider/RangeSlider";
 import LineGraph from "../linegraph/linegraph";
 
+function formatDate(date) {
+  return date.toISOString().split('T')[0];
+}
+
+function createDummyValues() {
+  const choices = [2, 3, 6];
+  return Array.from({ length: 10 }, () => choices[Math.floor(Math.random() * choices.length)]);
+}
+
+
+
 export default function MainPage() {
   const metrics = [
     "Deployment Frequency",
@@ -15,22 +26,23 @@ export default function MainPage() {
     "Avg. Pull Request Turnaround Time",
   ];
 
-  const dummyRawData = [
-    { name: "Deployment Frequency", values: [5, 10, 15, 20, 18, 16, 14, 12, 10, 8] },
-    { name: "Lead Time for Changes", values: [7, 8, 7, 6, 5, 4, 3, 4, 5, 6] },
-    { name: "Avg. Retro Mood", values: [3, 4, 5, 5, 3, 2, 4, 5, 4, 3] },
-    { name: "Open Issue Bug Count", values: [10, 9, 7, 8, 6, 5, 4, 3, 2, 1] },
-    { name: "Refinement Changes", values: [2, 2, 3, 4, 5, 5, 6, 7, 8, 9] },
-    { name: "Avg. Pull Request Turnaround Time", values: [12, 11, 10, 9, 8, 7, 6, 5, 4, 3] }
-  ];
+  const metricNameMap = {
+    "deployment_frequency": "Deployment Frequency",
+    "lead_times": "Lead Time for Changes",
+    "avg_retro_mood": "Avg. Retro Mood",
+    "open_issue_bug_count": "Open Issue Bug Count",
+    "refinement_changes": "Refinement Changes",
+    "average_turnaround_time": "Avg. Pull Request Turnaround Time"
+  };
+  
   const dummyCorrelationData = {
     correlations: {
-        "Deployment Frequency": 0.9,
-        "Lead Time for Changes": -0.5,
-        "Avg. Retro Mood": 0.3,
-        "Open Issue Bug Count": -0.2,
-        "Refinement Changes": 0.1,
-        "Avg. Pull Request Turnaround Time": 0.6
+        "Deployment Frequency": 0.23,
+        "Lead Time for Changes": -0.26,
+        "Avg. Retro Mood": 0.26,
+        "Open Issue Bug Count": -0.62,
+        "Refinement Changes": 0.36,
+        "Avg. Pull Request Turnaround Time": 0.63
     }
 };
 
@@ -43,36 +55,117 @@ export default function MainPage() {
     metrics.reduce((acc, metric) => ({ ...acc, [metric]: true }), {})
   );
   const [correlations, setCorrelations] = useState([]);
+  const [deploymentFrequencyData, setDeploymentFrequencyData] = useState([]);
+  const [pullRequestTurnaroundTimeData, setPullRequestTurnaroundTimeData] = useState([]);
+  const [leadTimeForChangesData, setLeadTimeForChangesData] = useState([]);
+  const [allMetricsData, setAllMetricsData] = useState([]);
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const formatDate = (date) => date.toISOString().split('T')[0];
-  //     const metric = barGraphMainMetric.replace(/\s+/g, '_').toLowerCase();  // Ensure metric is in correct format
-  //     const url = `http://127.0.0.1:5000/v1/correlation?start_date=${formatDate(dateRange[0])}&end_date=${formatDate(dateRange[1])}&main_metric=${metric}`;
 
-  //     try {
-  //       const response = await fetch(url);
-  //       if (!response.ok) throw new Error('Network response was not ok');
-        
-  //       const data = await response.json();
-  //       const apiCorrelations = data.correlations || {};
 
-  //       // Fill in missing data from dummyCorrelationData
-  //       const fullCorrelations = {...dummyCorrelationData.correlations}; // Start with dummy data
-  //       for (const key in apiCorrelations) {
-  //         fullCorrelations[key] = apiCorrelations[key]; // Overwrite with API data where available
-  //       }
+  useEffect(() => {
+    const metricsList = [
+        deploymentFrequencyData,
+        leadTimeForChangesData,
+        { name: "Avg. Retro Mood", values: createDummyValues() },
+        { name: "Open Issue Bug Count", values: createDummyValues() },
+        { name: "Refinement Changes", values: createDummyValues() },
+        pullRequestTurnaroundTimeData
+    ];
 
-  //       setCorrelations({correlations: fullCorrelations});
-  //     } catch (error) {
-  //       console.error('Failed to fetch correlations:', error);
-  //       setCorrelations(dummyCorrelationData); // Use dummy data if fetch fails
-  //     }
-  //   };
+    const validMetrics = metricsList.filter(metric => 
+        metric.values && metric.values.length > 0 && lineGraphMetrics[metric.name]
+    );
 
-  //   fetchData();
-  // }, [dateRange, barGraphMainMetric, dummyCorrelationData]);  // Include dummyCorrelationData in dependency array if it can change
+    setAllMetricsData(validMetrics);
+}, [deploymentFrequencyData, leadTimeForChangesData, pullRequestTurnaroundTimeData, lineGraphMetrics]);
 
+  
+ 
+
+  useEffect(() => {
+    const fetchDeploymentFrequencyData = async () => {
+      const url = `http://127.0.0.1:5000/v1/raw_metrics/deployment_frequency?start_date=${formatDate(dateRange[0])}&end_date=${formatDate(dateRange[1])}`;
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        setDeploymentFrequencyData({ name: "Deployment Frequency", values: data.data.map(item => item.deployments) });
+      } catch (error) {
+        console.error("Error fetching Deployment Frequency data:", error);
+      }
+    };
+
+    fetchDeploymentFrequencyData();
+  }, [dateRange]);
+  
+  useEffect(() => {
+    const fetchPullRequestTurnaroundTimeData = async () => {
+      const url = `http://127.0.0.1:5000/v1/raw_metrics/pull_request_turnaround_time?start_date=${formatDate(dateRange[0])}&end_date=${formatDate(dateRange[1])}`;
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        setPullRequestTurnaroundTimeData({ name: "Avg. Pull Request Turnaround Time", values: data.data.map(item => item.average_turnaround_time) });
+      } catch (error) {
+        console.error("Error fetching Pull Request Turnaround Time data:", error);
+      }
+    };
+  
+    fetchPullRequestTurnaroundTimeData();
+  }, [dateRange]);
+  
+  useEffect(() => {
+    const fetchLeadTimeForChangesData = async () => {
+      const url = `http://127.0.0.1:5000/v1/raw_metrics/lead_time_for_changes?start_date=${formatDate(dateRange[0])}&end_date=${formatDate(dateRange[1])}`;
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        setLeadTimeForChangesData({ name: "Lead Time for Changes", values: data.data.map(item => item.total_lead_time) });
+      } catch (error) {
+        console.error("Error fetching Lead Time for Changes data:", error);
+      }
+    };
+  
+    fetchLeadTimeForChangesData();
+  }, [dateRange]);
+  
+
+
+
+  
+
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const formatDate = (date) => date.toISOString().split('T')[0];
+      const metric = barGraphMainMetric.replace(/\s+/g, '_').toLowerCase();
+      const url = `http://127.0.0.1:5000/v1/correlation?start_date=${formatDate(dateRange[0])}&end_date=${formatDate(dateRange[1])}&main_metric=${metric}`;
+  
+      try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Network response was not ok');
+        const data = await response.json();
+        const apiCorrelations = data.correlations || {};
+        const adjustedCorrelations = {};
+        for (const key in apiCorrelations) {
+          const standardizedKey = metricNameMap[key] || key;
+          adjustedCorrelations[standardizedKey] = apiCorrelations[key];
+        }
+  
+        const fullCorrelations = {...dummyCorrelationData.correlations};
+        for (const key in adjustedCorrelations) {
+          fullCorrelations[key] = adjustedCorrelations[key];
+        }
+  
+        setCorrelations({correlations: fullCorrelations});
+      } catch (error) {
+        console.error('Failed to fetch correlations:', error);
+        setCorrelations(dummyCorrelationData);
+      }
+    };
+  
+    fetchData();
+  }, [dateRange, barGraphMainMetric]);
+  
 
 
   const handleRangeChange = (newRange) => {
@@ -121,7 +214,7 @@ export default function MainPage() {
         />
         <BarGraph
           sx={cardBackgroundStyle}
-          correlations={dummyCorrelationData}
+          correlations={correlations}
           mainMetric={barGraphMainMetric}
           comparedMetrics={barGraphMetrics}
         />
@@ -137,7 +230,7 @@ export default function MainPage() {
         />
         <LineGraph
           sx={cardBackgroundStyle}
-          metrics={dummyRawData}
+          metrics={allMetricsData}
         />
       </Box>
     </Box>

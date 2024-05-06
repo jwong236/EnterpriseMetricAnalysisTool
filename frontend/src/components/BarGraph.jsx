@@ -1,8 +1,9 @@
 import React from 'react';
 import { BarChart } from '@mui/x-charts/BarChart';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, useTheme } from '@mui/material';
 
 const BarGraph = ({ sx, correlations, mainMetric, comparedMetrics }) => {
+    const theme = useTheme();
     const correlationEntries = Object.entries(correlations.correlations || {});
 
     const processedCorrelations = correlationEntries
@@ -23,7 +24,7 @@ const BarGraph = ({ sx, correlations, mainMetric, comparedMetrics }) => {
                     colorMap: {
                         type: 'piecewise',
                         thresholds: [0],
-                        colors: ['#0000FF', '#FFD700'],
+                        colors: ["#0064a4", theme.palette.secondary.main],
                     }
                 }]}
                 series={[{

@@ -1,13 +1,18 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import MainPage from './components/MainPage/MainPage';
-import './App.css'
+import { ThemeProvider, CssBaseline } from '@mui/material';
+import theme from './theme';
+import MainPage from './components/MainPage';
+import './App.css';
 
 function App() {
     return (
-        <Routes>
-            <Route path="/" element={<MainPage />} />
-        </Routes>
+        <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <Routes>
+                <Route path="/" element={<MainPage />} />
+            </Routes>
+        </ThemeProvider>
     );
 }
 

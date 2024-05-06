@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Box, Typography } from "@mui/material";
-import BarGraph from "../bargraph/bargraph";
-import MetricList from "../MetricList/MetricList";
-import RangeSlider from "../RangeSlider/RangeSlider";
-import LineGraph from "../linegraph/linegraph";
+import BarGraph from "./BarGraph";
+import MetricList from "./MetricList";
+import RangeSlider from "./SprintRangeSlider";
+import LineGraph from "./LineGraph";
 
 function formatDate(date) {
   return date.toISOString().split('T')[0];
@@ -195,12 +195,13 @@ export default function MainPage() {
     padding: "1rem",
     border: "1px solid #ccc",
     borderRadius: "4px",
-    backgroundColor: "#f6f6f6"
+    backgroundColor: "#ffffff",
+    boxShadow: "0px 4px 8px rgba(0,0,0,0.1)"
   }
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", backgroundColor: "#EBF8FF", alignItems: 'center'}}>
-      <Typography variant='h3' color='black' sx={{margin: '2rem 1rem 1rem 1rem'}}>UCICapstone2024 Enterprise Metric Analysis Tool</Typography>
+    <Box sx={{ display: "flex", flexDirection: "column", backgroundColor: "#f5f6f7", alignItems: 'center'}}>
+      <Typography variant='h3' color='primary.dark' sx={{margin: '2rem 1rem 1rem 1rem'}}>UCICapstone2024 Enterprise Metric Analysis Tool</Typography>
       <RangeSlider sx={{...cardBackgroundStyle, width: '80%'}} range={dateRange} onRangeChange={handleRangeChange} />
       <Box sx={{ display: "flex", flexDirection: "row" }}>
         <MetricList

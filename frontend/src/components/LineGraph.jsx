@@ -12,7 +12,7 @@ const LineGraph = ({ sx, metrics }) => {
     }, [metrics]);
 
     const maxXAxisValue = metrics.reduce((max, metric) => Math.max(max, metric.values.length), 0);
-    const xAxisData = Array.from({ length: maxXAxisValue }, (_, i) => i + 1);
+    const xAxisData = Array.from({ length: maxXAxisValue }, (_, i) => (i + 1)/2);
 
     const series = metrics.map(metric => ({
         label: metric.name,

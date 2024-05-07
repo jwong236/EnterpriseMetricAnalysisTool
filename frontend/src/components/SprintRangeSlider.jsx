@@ -6,17 +6,12 @@ import Typography from '@mui/material/Typography';
 import Slider from '@mui/material/Slider';
 import MuiInput from '@mui/material/Input';
 import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
+import { dateToSprintNumber } from '../utils/dateToSprint';
 
 const Input = styled(MuiInput)`
   width: 115px;
 `;
 
-function dateToSprintNumber(date) {
-  const startDate = new Date('2023-01-01');
-  const diffTime = Math.abs(date - startDate);
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  return Math.floor(diffDays / 14) + 1;
-}
 
 function RangeSlider({ sx, range, onRangeChange }) {
   const [localRange, setLocalRange] = useState(range.map(date => date.getTime()));

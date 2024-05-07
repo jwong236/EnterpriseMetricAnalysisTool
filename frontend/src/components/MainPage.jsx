@@ -4,6 +4,7 @@ import BarGraph from "./BarGraph";
 import MetricList from "./MetricList";
 import RangeSlider from "./SprintRangeSlider";
 import LineGraph from "./LineGraph";
+import { dateToSprintNumber } from "../utils/dateToSprint";
 
 function formatDate(date) {
   return date.toISOString().split('T')[0];
@@ -169,6 +170,7 @@ useEffect(() => {
       <Typography variant='h3' color='primary.dark' sx={{margin: '2rem 1rem 1rem 1rem'}}>UCICapstone2024 Enterprise Metric Analysis Tool</Typography>
       <RangeSlider sx={{...cardBackgroundStyle, width: '89.5%'}} range={dateRange} onRangeChange={handleRangeChange} />
       <Box sx={{display:"flex", flexDirection:"column", width:"100vw", overflow:"hidden"}}>
+        {/* the bar chart */}
         <Box sx={{ display: "flex", flexDirection: "row"}}>
           <MetricList
             sx={leftCardBackgroundStyle}
@@ -187,6 +189,7 @@ useEffect(() => {
           />
         </Box>
 
+        {/* the line graph */}
         <Box sx={{ display: "flex", flexDirection: "row" }}>
           <MetricList
             sx={leftCardBackgroundStyle}
@@ -198,6 +201,7 @@ useEffect(() => {
           <LineGraph
             sx={rightCardBackgroundStyle}
             metrics={filteredMetrics}
+            offset={dateToSprintNumber(dateRange[0])} // get the date of the start date, then get the sprint
           />
         </Box>
       </Box>

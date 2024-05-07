@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { LineChart } from '@mui/x-charts/LineChart';
 import { Box, Typography, CircularProgress } from '@mui/material';
 
-const LineGraph = ({ sx, metrics }) => {
+const LineGraph = ({ sx, metrics, offset }) => {
+    if (offset === undefined || offset === null) offset = 1; 
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -12,7 +13,9 @@ const LineGraph = ({ sx, metrics }) => {
     }, [metrics]);
 
     const maxXAxisValue = metrics.reduce((max, metric) => Math.max(max, metric.values.length), 0);
-    const xAxisData = Array.from({ length: maxXAxisValue }, (_, i) => (i + 1)/2);
+    console.log(maxXAxisValue)
+    const xAxisData = Array.from({ length: maxXAxisValue }, (_, i) => (i/2 + offset));
+    console.log(xAxisData)
 
     const series = metrics.map(metric => ({
         label: metric.name,

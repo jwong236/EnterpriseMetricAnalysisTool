@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BarChart } from '@mui/x-charts/BarChart';
 import { Box, Typography, useTheme, CircularProgress } from '@mui/material';
+import { ResponsiveChartContainer } from '@mui/x-charts/ResponsiveChartContainer';
 
 const BarGraph = ({ sx, correlations, mainMetric, comparedMetrics }) => {
     const theme = useTheme();
@@ -27,25 +28,27 @@ const BarGraph = ({ sx, correlations, mainMetric, comparedMetrics }) => {
             {loading ? (
                 <CircularProgress />
             ) : (
-                <BarChart
-                    dataset={processedCorrelations}
-                    yAxis={[{ scaleType: 'band', dataKey: 'metric' }]}
-                    xAxis={[{
-                        colorMap: {
-                            type: 'piecewise',
-                            thresholds: [0],
-                            colors: ["#0064a4", theme.palette.secondary.main],
-                        }
-                    }]}
-                    series={[{
-                        dataKey: 'value',
-                        valueFormatter: (value) => `${value.toFixed(2)} units`
-                    }]}
-                    layout="horizontal"
-                    width={1300}
-                    height={500}
-                    margin={{ left: 210 }}
-                />
+                <Box width="100%">
+
+                    <BarChart
+                        dataset={processedCorrelations}
+                        yAxis={[{ scaleType: 'band', dataKey: 'metric' }]}
+                        xAxis={[{
+                            colorMap: {
+                                type: 'piecewise',
+                                thresholds: [0],
+                                colors: ["#0064a4", theme.palette.secondary.main],
+                            }
+                        }]}
+                        series={[{
+                            dataKey: 'value',
+                            valueFormatter: (value) => `${value.toFixed(2)} units`
+                        }]}
+                        layout="horizontal"
+                        height={500}
+                        margin={{ left: 210 }}
+                    />
+                </Box>
             )}
         </Box>
     );

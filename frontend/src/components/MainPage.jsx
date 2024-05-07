@@ -137,8 +137,30 @@ useEffect(() => {
     border: "1px solid #ccc",
     borderRadius: "20px",
     backgroundColor: "#ffffff",
-    boxShadow: "0px 4px 8px rgba(0,0,0,0.1)"
+    boxShadow: "0px 4px 8px rgba(0,0,0,0.1)",
   }
+  // the style for the selection
+  const leftCardBackgroundStyle = { 
+    margin: "1rem",
+    padding: "1rem",
+    border: "1px solid #ccc",
+    borderRadius: "20px",
+    backgroundColor: "#ffffff",
+    boxShadow: "0px 4px 8px rgba(0,0,0,0.1)",
+    flex: 1
+  }
+
+  // the style fot the chart
+  const rightCardBackgroundStyle = { 
+    margin: "1rem",
+    padding: "1rem",
+    border: "1px solid #ccc",
+    borderRadius: "20px",
+    backgroundColor: "#ffffff",
+    boxShadow: "0px 4px 8px rgba(0,0,0,0.1)",
+    flex: 3
+  }
+
 
   const filteredMetrics = allMetricsData.filter(metric => lineGraphMetrics[metric.name]);
 
@@ -146,37 +168,40 @@ useEffect(() => {
     <Box sx={{ display: "flex", flexDirection: "column", backgroundColor: "#f5f6f7", alignItems: 'center'}}>
       <Typography variant='h3' color='primary.dark' sx={{margin: '2rem 1rem 1rem 1rem'}}>UCICapstone2024 Enterprise Metric Analysis Tool</Typography>
       <RangeSlider sx={{...cardBackgroundStyle, width: '89.5%'}} range={dateRange} onRangeChange={handleRangeChange} />
-      <Box sx={{ display: "flex", flexDirection: "row" }}>
-        <MetricList
-          sx={cardBackgroundStyle}
-          dropDownMetric={barGraphMainMetric}
-          metrics={barGraphMetrics}
-          onDropDownMetricChange={handleBarGraphMainMetricChange}
-          onMetricChange={handleBarGraphMetricChange}
-          setMetrics={setBarGraphMetrics}
-          showDropdownMetric={true}
-        />
-        <BarGraph
-          sx={cardBackgroundStyle}
-          correlations={correlations}
-          mainMetric={barGraphMainMetric}
-          comparedMetrics={barGraphMetrics}
-        />
-      </Box>
+      <Box sx={{display:"flex", flexDirection:"column", width:"100vw", overflow:"hidden"}}>
+        <Box sx={{ display: "flex", flexDirection: "row"}}>
+          <MetricList
+            sx={leftCardBackgroundStyle}
+            dropDownMetric={barGraphMainMetric}
+            metrics={barGraphMetrics}
+            onDropDownMetricChange={handleBarGraphMainMetricChange}
+            onMetricChange={handleBarGraphMetricChange}
+            setMetrics={setBarGraphMetrics}
+            showDropdownMetric={true}
+          />
+          <BarGraph
+            sx={rightCardBackgroundStyle}
+            correlations={correlations}
+            mainMetric={barGraphMainMetric}
+            comparedMetrics={barGraphMetrics}
+          />
+        </Box>
 
-      <Box sx={{ display: "flex", flexDirection: "row" }}>
-        <MetricList
-          sx={cardBackgroundStyle}
-          metrics={lineGraphMetrics}
-          onMetricChange={handleLineGraphMetricChange}
-          setMetrics={setLineGraphMetrics}
-          showDropdownMetric={false}
-        />
-        <LineGraph
-          sx={cardBackgroundStyle}
-          metrics={filteredMetrics}
-        />
+        <Box sx={{ display: "flex", flexDirection: "row" }}>
+          <MetricList
+            sx={leftCardBackgroundStyle}
+            metrics={lineGraphMetrics}
+            onMetricChange={handleLineGraphMetricChange}
+            setMetrics={setLineGraphMetrics}
+            showDropdownMetric={false}
+          />
+          <LineGraph
+            sx={rightCardBackgroundStyle}
+            metrics={filteredMetrics}
+          />
+        </Box>
       </Box>
+      
     </Box>
   );
 }

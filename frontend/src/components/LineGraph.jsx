@@ -33,7 +33,6 @@ const LineGraph = ({ sx, metrics }) => {
                     xAxis={[{ data: xAxisData, label: 'Sprint Number'}]}
                     layout="horizontal"
                     height={400}
-                    width={1300}
                     margin={{ top: 120, right: 100, bottom: 40, left: 40 }}
                 />
             )}

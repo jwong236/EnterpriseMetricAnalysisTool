@@ -35,14 +35,24 @@ def adjust_date_range(start_date, end_date, start_day):
 
 def calculate_metric(start_date, end_date, metric_name):
     """
-    Generic function to calculate metrics with random data generation.
+    Generic function to calculate metrics with trend-based random data generation.
     """
     start_date, end_date = adjust_date_range(start_date, end_date, constants.WEEK_START_DAY)
     weeks = pd.date_range(start=start_date, end=end_date + pd.Timedelta(days=1), freq=f'W-{constants.WEEK_START_DAY[:3].upper()}')
-    data = [{
-        "week_range": f"{week.strftime('%Y-%m-%d')} to {(week + pd.Timedelta(days=6)).strftime('%Y-%m-%d')}",
-        metric_name: random.choice([2, 3, 6])
-    } for week in weeks[:-1]]
+    
+    metric_value = random.randint(30, 50)
+    change_range = [-30, -10, -5, -5, 0, 5, 10]
+
+    data = []
+    for week in weeks[:-1]:
+        metric_value += random.choice(change_range)
+        metric_value = max(1, metric_value)
+
+        week_data = {
+            "week_range": f"{week.strftime('%Y-%m-%d')} to {(week + pd.Timedelta(days=6)).strftime('%Y-%m-%d')}",
+            metric_name: metric_value
+        }
+        data.append(week_data)
 
     return jsonify({
         "data": data,

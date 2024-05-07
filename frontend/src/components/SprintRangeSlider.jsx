@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -19,14 +19,21 @@ function dateToSprintNumber(date) {
 }
 
 function RangeSlider({ sx, range, onRangeChange }) {
+  const [localRange, setLocalRange] = useState(range.map(date => date.getTime()));
   const handleSliderChange = (event, newValue) => {
+    setLocalRange(newValue);
+  };
+
+  const handleSliderChangeCommitted = (event, newValue) => {
     onRangeChange(newValue.map(value => new Date(value)));
   };
 
   const handleInputChange = (index) => (event) => {
-    const newRange = [...range];
-    newRange[index] = new Date(event.target.value);
-    onRangeChange(newRange);
+    const newDate = new Date(event.target.value);
+    const newLocalRange = [...localRange];
+    newLocalRange[index] = newDate.getTime();
+    setLocalRange(newLocalRange);
+    onRangeChange(newLocalRange.map(value => new Date(value)));
   };
 
   return (
@@ -40,8 +47,9 @@ function RangeSlider({ sx, range, onRangeChange }) {
         </Grid>
         <Grid item xs sx={{ marginRight: '1rem' }}>
           <Slider
-            value={range.map(date => date.getTime())}
+            value={localRange}
             onChange={handleSliderChange}
+            onChangeCommitted={handleSliderChangeCommitted}
             valueLabelDisplay="auto"
             aria-labelledby="input-slider"
             min={new Date('2023-01-01').getTime()}
@@ -53,11 +61,10 @@ function RangeSlider({ sx, range, onRangeChange }) {
           />
         </Grid>
         {range.map((value, index) => (
-          <Grid item key={index} >
+          <Grid item key={index}>
             <Input
-              value={value.toISOString().substring(0, 10)}
+              value={new Date(localRange[index]).toISOString().substring(0, 10)}
               onChange={handleInputChange(index)}
-              onBlur={() => {}}
               inputProps={{
                 type: 'date',
                 'aria-labelledby': 'input-slider',

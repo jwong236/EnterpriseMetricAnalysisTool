@@ -15,7 +15,7 @@ export default function MetricList({
         "Lead Time for Changes",
         "Avg Retro Mood",
         "Open Issue Bug Count",
-        "Refinement Changes",
+        "Refinement Changes Count",
         "Avg Pull Request Turnaround Time",
         "Avg Blocked Task Time"
     ];

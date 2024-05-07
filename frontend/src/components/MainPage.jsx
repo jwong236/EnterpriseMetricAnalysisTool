@@ -16,7 +16,7 @@ export default function MainPage() {
     "Lead Time for Changes",
     "Avg Retro Mood",
     "Open Issue Bug Count",
-    "Refinement Changes",
+    "Refinement Changes Count",
     "Avg Pull Request Turnaround Time",
     "Avg Blocked Task Time"
   ];
@@ -26,7 +26,7 @@ export default function MainPage() {
     "Lead Time for Changes": "lead_time_for_changes",
     "Avg Retro Mood": "avg_retro_mood",
     "Open Issue Bug Count": "open_issue_bug_count",
-    "Refinement Changes": "refinement_changes_count",
+    "Refinement Changes Count": "refinement_changes_count",
     "Avg Pull Request Turnaround Time": "avg_pull_request_turnaround_time",
     "Avg Blocked Task Time": "avg_blocked_task_time"
   };
@@ -78,7 +78,7 @@ export default function MainPage() {
     fetchData();
   }, [dateRange]);
 
-
+console.log(barGraphMainMetric)
   
 useEffect(() => {
   const fetchData = async () => {

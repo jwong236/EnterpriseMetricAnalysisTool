@@ -41,7 +41,7 @@ def calculate_metric(start_date, end_date, metric_name):
     weeks = pd.date_range(start=start_date, end=end_date + pd.Timedelta(days=1), freq=f'W-{constants.WEEK_START_DAY[:3].upper()}')
     
     metric_value = random.randint(30, 50)
-    change_range = [-30, -10, -5, -5, 0, 5, 10]
+    change_range = [30, -10, -5, -5, 0, 5, 10]
 
     data = []
     for week in weeks[:-1]:

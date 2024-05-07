@@ -133,7 +133,8 @@ useEffect(() => {
   };
 
   const cardBackgroundStyle = { 
-    margin: "1rem",
+    width:"100%",
+    marginX: "1rem",
     padding: "1rem",
     border: "1px solid #ccc",
     borderRadius: "20px",
@@ -142,7 +143,6 @@ useEffect(() => {
   }
   // the style for the selection
   const leftCardBackgroundStyle = { 
-    margin: "1rem",
     padding: "1rem",
     border: "1px solid #ccc",
     borderRadius: "20px",
@@ -152,8 +152,7 @@ useEffect(() => {
   }
 
   // the style fot the chart
-  const rightCardBackgroundStyle = { 
-    margin: "1rem",
+  const rightCardBackgroundStyle = {
     padding: "1rem",
     border: "1px solid #ccc",
     borderRadius: "20px",
@@ -166,46 +165,48 @@ useEffect(() => {
   const filteredMetrics = allMetricsData.filter(metric => lineGraphMetrics[metric.name]);
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", backgroundColor: "#f5f6f7", alignItems: 'center'}}>
-      <Typography variant='h3' color='primary.dark' sx={{margin: '2rem 1rem 1rem 1rem'}}>UCICapstone2024 Enterprise Metric Analysis Tool</Typography>
-      <RangeSlider sx={{...cardBackgroundStyle, width: '89.5%'}} range={dateRange} onRangeChange={handleRangeChange} />
-      <Box sx={{display:"flex", flexDirection:"column", width:"100vw", overflow:"hidden", maxWidth:"1870px"}}>
-        {/* the bar chart */}
-        <Box sx={{ display: "flex", flexDirection: "row"}}>
-          <MetricList
-            sx={leftCardBackgroundStyle}
-            dropDownMetric={barGraphMainMetric}
-            metrics={barGraphMetrics}
-            onDropDownMetricChange={handleBarGraphMainMetricChange}
-            onMetricChange={handleBarGraphMetricChange}
-            setMetrics={setBarGraphMetrics}
-            showDropdownMetric={true}
-          />
-          <BarGraph
-            sx={rightCardBackgroundStyle}
-            correlations={correlations}
-            mainMetric={barGraphMainMetric}
-            comparedMetrics={barGraphMetrics}
-          />
-        </Box>
+    <Box sx={{width:"100vw", overflow:"hidden",backgroundColor: "#f5f6f7", alignSelf:"center", display:"flex", justifyContent:"center"}}>
+      <Box sx={{ display: "flex", flexDirection: "column", gap: "2rem", alignItems: 'center', width:"100%", maxWidth:"1870px", margin:"3rem"}}>
+        <Typography variant='h3' color='primary.dark' sx={{margin: '2rem 1rem 1rem 1rem'}}>UCICapstone2024 Enterprise Metric Analysis Tool</Typography>
+        <RangeSlider sx={{...cardBackgroundStyle}} range={dateRange} onRangeChange={handleRangeChange} />
+        <Box sx={{display:"flex", flexDirection:"column", gap: "2rem", width:"100%"}}>
+          {/* the bar chart */}
+          <Box sx={{ display: "flex", flexDirection: "row", gap: "2rem"}}>
+            <MetricList
+              sx={leftCardBackgroundStyle}
+              dropDownMetric={barGraphMainMetric}
+              metrics={barGraphMetrics}
+              onDropDownMetricChange={handleBarGraphMainMetricChange}
+              onMetricChange={handleBarGraphMetricChange}
+              setMetrics={setBarGraphMetrics}
+              showDropdownMetric={true}
+            />
+            <BarGraph
+              sx={rightCardBackgroundStyle}
+              correlations={correlations}
+              mainMetric={barGraphMainMetric}
+              comparedMetrics={barGraphMetrics}
+            />
+          </Box>
 
-        {/* the line graph */}
-        <Box sx={{ display: "flex", flexDirection: "row" }}>
-          <MetricList
-            sx={leftCardBackgroundStyle}
-            metrics={lineGraphMetrics}
-            onMetricChange={handleLineGraphMetricChange}
-            setMetrics={setLineGraphMetrics}
-            showDropdownMetric={false}
-          />
-          <LineGraph
-            sx={rightCardBackgroundStyle}
-            metrics={filteredMetrics}
-            offset={dateToSprintNumber(dateRange[0])} // get the date of the start date, then get the sprint
-          />
+          {/* the line graph */}
+          <Box sx={{ display: "flex", flexDirection: "row", gap: "2rem"}}>
+            <MetricList
+              sx={leftCardBackgroundStyle}
+              metrics={lineGraphMetrics}
+              onMetricChange={handleLineGraphMetricChange}
+              setMetrics={setLineGraphMetrics}
+              showDropdownMetric={false}
+            />
+            <LineGraph
+              sx={rightCardBackgroundStyle}
+              metrics={filteredMetrics}
+              offset={dateToSprintNumber(dateRange[0])} // get the date of the start date, then get the sprint
+            />
+          </Box>
         </Box>
+        
       </Box>
-      
     </Box>
   );
 }

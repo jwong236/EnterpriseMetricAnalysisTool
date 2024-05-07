@@ -169,7 +169,7 @@ useEffect(() => {
     <Box sx={{ display: "flex", flexDirection: "column", backgroundColor: "#f5f6f7", alignItems: 'center'}}>
       <Typography variant='h3' color='primary.dark' sx={{margin: '2rem 1rem 1rem 1rem'}}>UCICapstone2024 Enterprise Metric Analysis Tool</Typography>
       <RangeSlider sx={{...cardBackgroundStyle, width: '89.5%'}} range={dateRange} onRangeChange={handleRangeChange} />
-      <Box sx={{display:"flex", flexDirection:"column", width:"100vw", overflow:"hidden"}}>
+      <Box sx={{display:"flex", flexDirection:"column", width:"100vw", overflow:"hidden", maxWidth:"1870px"}}>
         {/* the bar chart */}
         <Box sx={{ display: "flex", flexDirection: "row"}}>
           <MetricList

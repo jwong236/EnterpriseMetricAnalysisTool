@@ -9,12 +9,6 @@ function formatDate(date) {
   return date.toISOString().split('T')[0];
 }
 
-function createDummyValues() {
-  const choices = [2, 3, 6];
-  return Array.from({ length: 10 }, () => choices[Math.floor(Math.random() * choices.length)]);
-}
-
-
 
 export default function MainPage() {
   const metrics = [
@@ -50,36 +44,41 @@ export default function MainPage() {
     metrics.reduce((acc, metric) => ({ ...acc, [metric]: true }), {})
   );
 
-
   const [allMetricsData, setAllMetricsData] = useState([]);
   const [correlations, setCorrelations] = useState([]);
 
-  const [deploymentFrequencyData, setDeploymentFrequencyData] = useState([]);
-  const [leadTimeForChangesData, setLeadTimeForChangesData] = useState([]);
-  const [avgRetroMoodData, setAvgRetroMoodData] = useState([]);
-  const [openIssueBugCountData, setOpenIssueBugCountData] = useState([]);
-  const [refinementChangesData, setRefinementChangesData] = useState([]);
-  const [avgPullRequestTurnaroundTimeData, setAvgPullRequestTurnaroundTimeData] = useState([]);
-  const [avgBlockedTaskTimeData, setAvgBlockedTaskTimeData] = useState([]);
-
   useEffect(() => {
-    const metricsList = [
-        deploymentFrequencyData,
-        leadTimeForChangesData,
-        avgRetroMoodData,
-        openIssueBugCountData,
-        refinementChangesData,
-        avgPullRequestTurnaroundTimeData,
-        avgBlockedTaskTimeData
+    const metricEndpoints = [
+      { name: "Deployment Frequency", endpoint: "deployment_frequency", key: "deployments" },
+      { name: "Lead Time for Changes", endpoint: "lead_time_for_changes", key: "total_lead_time" },
+      { name: "Avg Retro Mood", endpoint: "avg_retro_mood", key: "avg_retro_mood" },
+      { name: "Open Issue Bug Count", endpoint: "open_issue_bug_count", key: "open_issue_bug_count" },
+      { name: "Refinement Changes", endpoint: "refinement_changes_count", key: "refinement_changes_count" },
+      { name: "Avg Pull Request Turnaround Time", endpoint: "avg_pull_request_turnaround_time", key: "avg_pull_request_turnaround_time" },
+      { name: "Avg Blocked Task Time", endpoint: "avg_blocked_task_time", key: "avg_blocked_task_time" },
     ];
-    
-    
-    const validMetrics = metricsList.filter(metric => 
-        metric.values && metric.values.length > 0 && lineGraphMetrics[metric.name]
-    );
-    
-    setAllMetricsData(validMetrics);
-}, [lineGraphMetrics]);
+
+    const fetchData = async () => {
+      const fetchPromises = metricEndpoints.map(async metric => {
+        const url = `http://127.0.0.1:5000/v1/raw_metrics/${metric.endpoint}?start_date=${formatDate(dateRange[0])}&end_date=${formatDate(dateRange[1])}`;
+        try {
+          const response = await fetch(url);
+          const data = await response.json();
+          return { name: metric.name, values: data.data.map(item => item[metric.key]) };
+        } catch (error) {
+          console.error(`Error fetching data for ${metric.name}:`, error);
+          return { name: metric.name, values: [] };
+        }
+      });
+
+      const results = await Promise.all(fetchPromises);
+      const filteredResults = results.filter(metric => lineGraphMetrics[metric.name]);
+      setAllMetricsData(filteredResults);
+    };
+
+    fetchData();
+  }, [dateRange, lineGraphMetrics]);
+
 
   
 useEffect(() => {
@@ -95,9 +94,8 @@ useEffect(() => {
       const apiCorrelations = data.correlations || {};
       const adjustedCorrelations = {};
 
-      // Use the inverseMetricNameMap to translate API keys to readable names
       for (const key in apiCorrelations) {
-        const readableKey = inverseMetricNameMap[key] || key; // Use the readable name, fallback to the API key if mapping doesn't exist
+        const readableKey = inverseMetricNameMap[key] || key;
         adjustedCorrelations[readableKey] = apiCorrelations[key];
       }
 
@@ -110,119 +108,6 @@ useEffect(() => {
 
   fetchData();
 }, [dateRange, barGraphMainMetric]);
-
-
-
-
-
-  useEffect(() => {
-    const fetchDeploymentFrequencyData = async () => {
-      const url = `http://127.0.0.1:5000/v1/raw_metrics/deployment_frequency?start_date=${formatDate(dateRange[0])}&end_date=${formatDate(dateRange[1])}`;
-      try {
-        const response = await fetch(url);
-        const data = await response.json();
-        setDeploymentFrequencyData({ name: "Deployment Frequency", values: data.data.map(item => item.deployments) });
-      } catch (error) {
-        console.error("Error fetching Deployment Frequency data:", error);
-      }
-    };
-
-    fetchDeploymentFrequencyData();
-  }, [dateRange]);
-  
-  useEffect(() => {
-    const fetchAvgRetroMoodData = async () => {
-      const url = `http://127.0.0.1:5000/v1/raw_metrics/avg_retro_mood?start_date=${formatDate(dateRange[0])}&end_date=${formatDate(dateRange[1])}`;
-      try {
-        const response = await fetch(url);
-        const data = await response.json();
-        setAvgRetroMoodData({ name: "Avg Retro Mood", values: data.data.map(item => item.avg_retro_mood) });
-        
-      } catch (error) {
-        console.error("Error fetching Avg. Retro Mood data:", error);
-      }
-    };
-  
-    fetchAvgRetroMoodData();
-  }, [dateRange]);
-  
-  useEffect(() => {
-    const fetchOpenIssueBugCountData = async () => {
-      const url = `http://127.0.0.1:5000/v1/raw_metrics/open_issue_bug_count?start_date=${formatDate(dateRange[0])}&end_date=${formatDate(dateRange[1])}`;
-      try {
-        const response = await fetch(url);
-        const data = await response.json();
-        setOpenIssueBugCountData({ name: "Open Issue Bug Count", values: data.data.map(item => item.open_issue_bug_count) });
-      } catch (error) {
-        console.error("Error fetching Open Issue Bug Count data:", error);
-      }
-    };
-  
-    fetchOpenIssueBugCountData();
-  }, [dateRange]);
-  
-  useEffect(() => {
-    const fetchRefinementChangesData = async () => {
-      const url = `http://127.0.0.1:5000/v1/raw_metrics/refinement_changes_count?start_date=${formatDate(dateRange[0])}&end_date=${formatDate(dateRange[1])}`;
-      try {
-        const response = await fetch(url);
-        const data = await response.json();
-        setRefinementChangesData({ name: "Refinement Changes", values: data.data.map(item => item.refinement_changes_count) });
-      } catch (error) {
-        console.error("Error fetching Refinement Changes data:", error);
-      }
-    };
-  
-    fetchRefinementChangesData();
-  }, [dateRange]);
-  
-  useEffect(() => {
-    const fetchAvgPullRequestTurnaroundTimeData = async () => {
-      const url = `http://127.0.0.1:5000/v1/raw_metrics/avg_pull_request_turnaround_time?start_date=${formatDate(dateRange[0])}&end_date=${formatDate(dateRange[1])}`;
-      try {
-        const response = await fetch(url);
-        const data = await response.json();
-        setAvgPullRequestTurnaroundTimeData({ name: "Avg Pull Request Turnaround Time", values: data.data.map(item => item.avg_pull_request_turnaround_time) });
-      } catch (error) {
-        console.error("Error fetching Avg. Pull Request Turnaround Time data:", error);
-      }
-    };
-  
-    fetchAvgPullRequestTurnaroundTimeData();
-  }, [dateRange]);
-  
-  useEffect(() => {
-    const fetchAvgBlockedTaskTimeData = async () => {
-      const url = `http://127.0.0.1:5000/v1/raw_metrics/avg_blocked_task_time?start_date=${formatDate(dateRange[0])}&end_date=${formatDate(dateRange[1])}`;
-      try {
-        const response = await fetch(url);
-        const data = await response.json();
-        setAvgBlockedTaskTimeData({ name: "Avg Blocked Task Time", values: data.data.map(item => item.avg_blocked_task_time) });
-      } catch (error) {
-        console.error("Error fetching Avg. Blocked Task Time data:", error);
-      }
-    };
-  
-    fetchAvgBlockedTaskTimeData();
-  }, [dateRange]);
-  
-  useEffect(() => {
-    const fetchLeadTimeForChangesData = async () => {
-      const url = `http://127.0.0.1:5000/v1/raw_metrics/lead_time_for_changes?start_date=${formatDate(dateRange[0])}&end_date=${formatDate(dateRange[1])}`;
-      try {
-        const response = await fetch(url);
-        const data = await response.json();
-        setLeadTimeForChangesData({ name: "Lead Time for Changes", values: data.data.map(item => item.total_lead_time) });
-      } catch (error) {
-        console.error("Error fetching Lead Time for Changes data:", error);
-      }
-    };
-  
-    fetchLeadTimeForChangesData();
-  }, [dateRange]);
-  
-  
-  
 
 
   const handleRangeChange = (newRange) => {

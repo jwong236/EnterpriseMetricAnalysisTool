@@ -5,7 +5,6 @@ import { Box, Typography, useTheme } from '@mui/material';
 const BarGraph = ({ sx, correlations, mainMetric, comparedMetrics }) => {
     const theme = useTheme();
     const correlationEntries = Object.entries(correlations.correlations || {});
-
     const processedCorrelations = correlationEntries
         .filter(([metric, value]) => comparedMetrics[metric] && metric !== mainMetric)
         .sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]))

@@ -46,28 +46,28 @@ def raw_metrics_index():
                     "end_date": "YYYY-MM-DD"
                 }
             },
-            "average_blocked_task_time": {
-                "route": "/v1/raw_metrics/average_blocked_task_time",
+            "avg_blocked_task_time": {
+                "route": "/v1/raw_metrics/avg_blocked_task_time",
                 "method": "GET",
-                "description": "Get average blocked task time per week between start and end dates.",
+                "description": "Get avg blocked task time per week between start and end dates.",
                 "parameters": {
                     "start_date": "YYYY-MM-DD",
                     "end_date": "YYYY-MM-DD"
                 }
             },
-            "average_retro_mood": {
-                "route": "/v1/raw_metrics/average_retro_mood",
+            "avg_retro_mood": {
+                "route": "/v1/raw_metrics/avg_retro_mood",
                 "method": "GET",
-                "description": "Get average retrospective mood score per week between start and end dates.",
+                "description": "Get avg retrospective mood score per week between start and end dates.",
                 "parameters": {
                     "start_date": "YYYY-MM-DD",
                     "end_date": "YYYY-MM-DD"
                 }
             },
-            "average_open_issue_bug_count": {
-                "route": "/v1/raw_metrics/average_open_issue_bug_count",
+            "avg_open_issue_bug_count": {
+                "route": "/v1/raw_metrics/avg_open_issue_bug_count",
                 "method": "GET",
-                "description": "Get average open issue bug count per week between start and end dates.",
+                "description": "Get avg open issue bug count per week between start and end dates.",
                 "parameters": {
                     "start_date": "YYYY-MM-DD",
                     "end_date": "YYYY-MM-DD"
@@ -104,10 +104,10 @@ def correlation():
         # Fetching the data for all metrics and extracting JSON from the response
         deployment_response = service.calculate_deployment_frequency(start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d'))
         lead_time_response = service.calculate_lead_time_for_changes(start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d'))
-        turnaround_time_response = service.calculate_pull_request_turnaround_time(start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d'))
-        blocked_task_time_response = service.calculate_average_blocked_task_time(start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d'))
-        retro_mood_response = service.calculate_average_retro_mood(start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d'))
-        open_issue_bug_count_response = service.calculate_average_open_issue_bug_count(start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d'))
+        turnaround_time_response = service.calculate_avg_pull_request_turnaround_time(start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d'))
+        blocked_task_time_response = service.calculate_avg_blocked_task_time(start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d'))
+        retro_mood_response = service.calculate_avg_retro_mood(start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d'))
+        open_issue_bug_count_response = service.calculate_open_issue_bug_count(start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d'))
         refinement_changes_response = service.calculate_refinement_changes_count(start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d'))
 
         deployment_data = deployment_response.get_json()['data']
@@ -125,10 +125,10 @@ def correlation():
     metrics_map = {
         'deployment_frequency': [d['deployments'] for d in deployment_data],
         'lead_time_for_changes': [lt['total_lead_time'] for lt in lead_time_data],
-        'average_turnaround_time': [tt['average_turnaround_time'] for tt in turnaround_time_data],
-        'average_blocked_task_time': [bt['average_blocked_task_time'] for bt in blocked_task_time_data],
-        'average_retro_mood': [rm['average_retro_mood'] for rm in retro_mood_data],
-        'average_open_issue_bug_count': [bc['average_open_issue_bug_count'] for bc in open_issue_bug_count_data],
+        'avg_pull_request_turnaround_time': [tt['avg_pull_request_turnaround_time'] for tt in turnaround_time_data],
+        'avg_blocked_task_time': [bt['avg_blocked_task_time'] for bt in blocked_task_time_data],
+        'avg_retro_mood': [rm['avg_retro_mood'] for rm in retro_mood_data],
+        'open_issue_bug_count': [bc['open_issue_bug_count'] for bc in open_issue_bug_count_data],
         'refinement_changes_count': [rc['refinement_changes_count'] for rc in refinement_changes_data]
     }
     
@@ -168,46 +168,46 @@ def lead_time_for_changes():
 
 
 
-@bp.route('/raw_metrics/pull_request_turnaround_time')
-def pull_request_turnaround_time():
+@bp.route('/raw_metrics/avg_pull_request_turnaround_time')
+def avg_pull_request_turnaround_time():
     start_date = request.args.get('start_date')
     end_date = request.args.get('end_date')
     if not start_date or not end_date:
         return jsonify({"error": "Both 'start_date' and 'end_date' are required parameters."}), 400
     
-    return service.calculate_pull_request_turnaround_time(start_date, end_date)
+    return service.calculate_avg_pull_request_turnaround_time(start_date, end_date)
 
 
 
 
 
-@bp.route('/raw_metrics/average_blocked_task_time')
-def average_blocked_task_time():
+@bp.route('/raw_metrics/avg_blocked_task_time')
+def ave_blocked_task_time():
     start_date = request.args.get('start_date')
     end_date = request.args.get('end_date')
     if not start_date or not end_date:
         return jsonify({"error": "Both start_date and end_date are required parameters."}), 400
 
-    return service.calculate_average_blocked_task_time(start_date, end_date)
+    return service.calculate_avg_blocked_task_time(start_date, end_date)
     
 
-@bp.route('/raw_metrics/average_retro_mood')
-def average_retro_mood():
+@bp.route('/raw_metrics/avg_retro_mood')
+def avg_retro_mood():
     start_date = request.args.get('start_date')
     end_date = request.args.get('end_date')
     if not start_date or not end_date:
         return jsonify({"error": "Both start_date and end_date are required parameters."}), 400
 
-    return service.calculate_average_retro_mood(start_date, end_date)
+    return service.calculate_avg_retro_mood(start_date, end_date)
 
-@bp.route('/raw_metrics/average_open_issue_bug_count')
-def average_open_issue_bug_count():
+@bp.route('/raw_metrics/open_issue_bug_count')
+def open_issue_bug_count():
     start_date = request.args.get('start_date')
     end_date = request.args.get('end_date')
     if not start_date or not end_date:
         return jsonify({"error": "Both start_date and end_date are required parameters."}), 400
 
-    return service.calculate_average_open_issue_bug_count(start_date, end_date)
+    return service.calculate_open_issue_bug_count(start_date, end_date)
 
 @bp.route('/raw_metrics/refinement_changes_count')
 def refinement_changes_count():

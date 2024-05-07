@@ -3,6 +3,7 @@ import { LineChart } from '@mui/x-charts/LineChart';
 import { Box, Typography } from '@mui/material';
 
 const LineGraph = ({ sx, metrics }) => {
+    
     const maxXAxisValue = metrics.reduce((max, metric) => Math.max(max, metric.values.length), 0);
     const xAxisData = Array.from({ length: maxXAxisValue }, (_, i) => i + 1);
 

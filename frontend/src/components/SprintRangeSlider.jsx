@@ -34,11 +34,11 @@ function RangeSlider({ sx, range, onRangeChange }) {
       <Typography id="input-slider" variant="h5">
         Sprint Range
       </Typography>
-      <Grid container spacing={2} alignItems="center">
+      <Grid container spacing={2.5} alignItems="center">
         <Grid item>
           <DirectionsRunIcon />
         </Grid>
-        <Grid item xs>
+        <Grid item xs sx={{ marginRight: '1rem' }}>
           <Slider
             value={range.map(date => date.getTime())}
             onChange={handleSliderChange}
@@ -47,10 +47,13 @@ function RangeSlider({ sx, range, onRangeChange }) {
             min={new Date('2023-01-01').getTime()}
             max={new Date('2023-12-31').getTime()}
             valueLabelFormat={date => `Sprint ${dateToSprintNumber(new Date(date))}`}
+            sx={{
+              marginTop: '.5rem',
+            }}
           />
         </Grid>
         {range.map((value, index) => (
-          <Grid item key={index}>
+          <Grid item key={index} >
             <Input
               value={value.toISOString().substring(0, 10)}
               onChange={handleInputChange(index)}

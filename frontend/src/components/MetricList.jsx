@@ -13,10 +13,11 @@ export default function MetricList({
     const metricOptions = [
         "Deployment Frequency",
         "Lead Time for Changes",
-        "Avg. Retro Mood",
+        "Avg Retro Mood",
         "Open Issue Bug Count",
         "Refinement Changes",
-        "Avg. Pull Request Turnaround Time"
+        "Avg Pull Request Turnaround Time",
+        "Avg Blocked Task Time"
     ];
 
     const isAllSelected = metricOptions.every(metric => metrics[metric]);

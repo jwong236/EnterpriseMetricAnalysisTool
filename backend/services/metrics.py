@@ -49,14 +49,14 @@ def calculate_metric(start_date, end_date, metric_name):
         "description": f"{metric_name} from {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}"
     })
 
-def calculate_average_blocked_task_time(start_date, end_date):
-    return calculate_metric(start_date, end_date, "average_blocked_task_time")
+def calculate_avg_blocked_task_time(start_date, end_date):
+    return calculate_metric(start_date, end_date, "avg_blocked_task_time")
 
-def calculate_average_retro_mood(start_date, end_date):
-    return calculate_metric(start_date, end_date, "average_retro_mood")
+def calculate_avg_retro_mood(start_date, end_date):
+    return calculate_metric(start_date, end_date, "avg_retro_mood")
 
-def calculate_average_open_issue_bug_count(start_date, end_date):
-    return calculate_metric(start_date, end_date, "average_open_issue_bug_count")
+def calculate_open_issue_bug_count(start_date, end_date):
+    return calculate_metric(start_date, end_date, "open_issue_bug_count")
 
 def calculate_refinement_changes_count(start_date, end_date):
     return calculate_metric(start_date, end_date, "refinement_changes_count")
@@ -121,7 +121,7 @@ def calculate_deployment_frequency(start_date, end_date):
     })
 
 
-def calculate_pull_request_turnaround_time(start_date, end_date):
+def calculate_avg_pull_request_turnaround_time(start_date, end_date):
     csv_file = os.path.join(CSV_DIR, "scripts", "PRTT_DD.csv")
 
     try:
@@ -146,11 +146,11 @@ def calculate_pull_request_turnaround_time(start_date, end_date):
             total_week_turnaround = df['week_contribution'].sum()
             pr_count = df['pr_contribution'].sum()
 
-            average_turnaround = total_week_turnaround / pr_count if pr_count else 0
+            avg_pull_request_turnaround_time = total_week_turnaround / pr_count if pr_count else 0
             
             weekly_turnaround.append({
                 "week_range": f"{week_start.strftime('%Y-%m-%d')} to {week_end.strftime('%Y-%m-%d')}",
-                "average_turnaround_time": average_turnaround,
+                "avg_pull_request_turnaround_time": avg_pull_request_turnaround_time,
                 "pr_count": pr_count,
                 "total_turnaround_time": total_week_turnaround
             })

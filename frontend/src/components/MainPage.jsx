@@ -20,31 +20,26 @@ export default function MainPage() {
   const metrics = [
     "Deployment Frequency",
     "Lead Time for Changes",
-    "Avg. Retro Mood",
+    "Avg Retro Mood",
     "Open Issue Bug Count",
     "Refinement Changes",
-    "Avg. Pull Request Turnaround Time",
+    "Avg Pull Request Turnaround Time",
+    "Avg Blocked Task Time"
   ];
 
   const metricNameMap = {
-    "deployment_frequency": "Deployment Frequency",
-    "lead_times": "Lead Time for Changes",
-    "avg_retro_mood": "Avg. Retro Mood",
-    "open_issue_bug_count": "Open Issue Bug Count",
-    "refinement_changes": "Refinement Changes",
-    "average_turnaround_time": "Avg. Pull Request Turnaround Time"
+    "Deployment Frequency": "deployment_frequency",
+    "Lead Time for Changes": "lead_time_for_changes",
+    "Avg Retro Mood": "avg_retro_mood",
+    "Open Issue Bug Count": "open_issue_bug_count",
+    "Refinement Changes": "refinement_changes_count",
+    "Avg Pull Request Turnaround Time": "avg_pull_request_turnaround_time",
+    "Avg Blocked Task Time": "avg_blocked_task_time"
   };
-  
-  const dummyCorrelationData = {
-    correlations: {
-        "Deployment Frequency": 0.23,
-        "Lead Time for Changes": -0.26,
-        "Avg. Retro Mood": 0.26,
-        "Open Issue Bug Count": -0.62,
-        "Refinement Changes": 0.36,
-        "Avg. Pull Request Turnaround Time": 0.63
-    }
-};
+  const inverseMetricNameMap = Object.fromEntries(
+    Object.entries(metricNameMap).map(([key, value]) => [value, key])
+  );
+
 
   const [dateRange, setDateRange] = useState([new Date('2023-01-01'), new Date('2023-12-31')]);
   const [barGraphMainMetric, setBarGraphMainMetric] = useState(metrics[0]);
@@ -54,33 +49,71 @@ export default function MainPage() {
   const [lineGraphMetrics, setLineGraphMetrics] = useState(
     metrics.reduce((acc, metric) => ({ ...acc, [metric]: true }), {})
   );
-  const [correlations, setCorrelations] = useState([]);
-  const [deploymentFrequencyData, setDeploymentFrequencyData] = useState([]);
-  const [pullRequestTurnaroundTimeData, setPullRequestTurnaroundTimeData] = useState([]);
-  const [leadTimeForChangesData, setLeadTimeForChangesData] = useState([]);
+
+
   const [allMetricsData, setAllMetricsData] = useState([]);
+  const [correlations, setCorrelations] = useState([]);
 
-
+  const [deploymentFrequencyData, setDeploymentFrequencyData] = useState([]);
+  const [leadTimeForChangesData, setLeadTimeForChangesData] = useState([]);
+  const [avgRetroMoodData, setAvgRetroMoodData] = useState([]);
+  const [openIssueBugCountData, setOpenIssueBugCountData] = useState([]);
+  const [refinementChangesData, setRefinementChangesData] = useState([]);
+  const [avgPullRequestTurnaroundTimeData, setAvgPullRequestTurnaroundTimeData] = useState([]);
+  const [avgBlockedTaskTimeData, setAvgBlockedTaskTimeData] = useState([]);
 
   useEffect(() => {
     const metricsList = [
         deploymentFrequencyData,
         leadTimeForChangesData,
-        { name: "Avg. Retro Mood", values: createDummyValues() },
-        { name: "Open Issue Bug Count", values: createDummyValues() },
-        { name: "Refinement Changes", values: createDummyValues() },
-        pullRequestTurnaroundTimeData
+        avgRetroMoodData,
+        openIssueBugCountData,
+        refinementChangesData,
+        avgPullRequestTurnaroundTimeData,
+        avgBlockedTaskTimeData
     ];
-
+    
+    
     const validMetrics = metricsList.filter(metric => 
         metric.values && metric.values.length > 0 && lineGraphMetrics[metric.name]
     );
-
+    
     setAllMetricsData(validMetrics);
-}, [deploymentFrequencyData, leadTimeForChangesData, pullRequestTurnaroundTimeData, lineGraphMetrics]);
+}, [lineGraphMetrics]);
 
   
- 
+useEffect(() => {
+  const fetchData = async () => {
+    const formatDate = (date) => date.toISOString().split('T')[0];
+    const metric = barGraphMainMetric.replace(/\s+/g, '_').toLowerCase();
+    const url = `http://127.0.0.1:5000/v1/correlation?start_date=${formatDate(dateRange[0])}&end_date=${formatDate(dateRange[1])}&main_metric=${metric}`;
+
+    try {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`Network response was not ok (${response.status})`);
+      const data = await response.json();
+      const apiCorrelations = data.correlations || {};
+      const adjustedCorrelations = {};
+
+      // Use the inverseMetricNameMap to translate API keys to readable names
+      for (const key in apiCorrelations) {
+        const readableKey = inverseMetricNameMap[key] || key; // Use the readable name, fallback to the API key if mapping doesn't exist
+        adjustedCorrelations[readableKey] = apiCorrelations[key];
+      }
+
+      setCorrelations({ correlations: adjustedCorrelations });
+    } catch (error) {
+      console.error('Failed to fetch correlations:', error);
+      setCorrelations({ correlations: {} });
+    }
+  };
+
+  fetchData();
+}, [dateRange, barGraphMainMetric]);
+
+
+
+
 
   useEffect(() => {
     const fetchDeploymentFrequencyData = async () => {
@@ -98,18 +131,79 @@ export default function MainPage() {
   }, [dateRange]);
   
   useEffect(() => {
-    const fetchPullRequestTurnaroundTimeData = async () => {
-      const url = `http://127.0.0.1:5000/v1/raw_metrics/pull_request_turnaround_time?start_date=${formatDate(dateRange[0])}&end_date=${formatDate(dateRange[1])}`;
+    const fetchAvgRetroMoodData = async () => {
+      const url = `http://127.0.0.1:5000/v1/raw_metrics/avg_retro_mood?start_date=${formatDate(dateRange[0])}&end_date=${formatDate(dateRange[1])}`;
       try {
         const response = await fetch(url);
         const data = await response.json();
-        setPullRequestTurnaroundTimeData({ name: "Avg. Pull Request Turnaround Time", values: data.data.map(item => item.average_turnaround_time) });
+        setAvgRetroMoodData({ name: "Avg Retro Mood", values: data.data.map(item => item.avg_retro_mood) });
+        
       } catch (error) {
-        console.error("Error fetching Pull Request Turnaround Time data:", error);
+        console.error("Error fetching Avg. Retro Mood data:", error);
       }
     };
   
-    fetchPullRequestTurnaroundTimeData();
+    fetchAvgRetroMoodData();
+  }, [dateRange]);
+  
+  useEffect(() => {
+    const fetchOpenIssueBugCountData = async () => {
+      const url = `http://127.0.0.1:5000/v1/raw_metrics/open_issue_bug_count?start_date=${formatDate(dateRange[0])}&end_date=${formatDate(dateRange[1])}`;
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        setOpenIssueBugCountData({ name: "Open Issue Bug Count", values: data.data.map(item => item.open_issue_bug_count) });
+      } catch (error) {
+        console.error("Error fetching Open Issue Bug Count data:", error);
+      }
+    };
+  
+    fetchOpenIssueBugCountData();
+  }, [dateRange]);
+  
+  useEffect(() => {
+    const fetchRefinementChangesData = async () => {
+      const url = `http://127.0.0.1:5000/v1/raw_metrics/refinement_changes_count?start_date=${formatDate(dateRange[0])}&end_date=${formatDate(dateRange[1])}`;
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        setRefinementChangesData({ name: "Refinement Changes", values: data.data.map(item => item.refinement_changes_count) });
+      } catch (error) {
+        console.error("Error fetching Refinement Changes data:", error);
+      }
+    };
+  
+    fetchRefinementChangesData();
+  }, [dateRange]);
+  
+  useEffect(() => {
+    const fetchAvgPullRequestTurnaroundTimeData = async () => {
+      const url = `http://127.0.0.1:5000/v1/raw_metrics/avg_pull_request_turnaround_time?start_date=${formatDate(dateRange[0])}&end_date=${formatDate(dateRange[1])}`;
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        setAvgPullRequestTurnaroundTimeData({ name: "Avg Pull Request Turnaround Time", values: data.data.map(item => item.avg_pull_request_turnaround_time) });
+      } catch (error) {
+        console.error("Error fetching Avg. Pull Request Turnaround Time data:", error);
+      }
+    };
+  
+    fetchAvgPullRequestTurnaroundTimeData();
+  }, [dateRange]);
+  
+  useEffect(() => {
+    const fetchAvgBlockedTaskTimeData = async () => {
+      const url = `http://127.0.0.1:5000/v1/raw_metrics/avg_blocked_task_time?start_date=${formatDate(dateRange[0])}&end_date=${formatDate(dateRange[1])}`;
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        setAvgBlockedTaskTimeData({ name: "Avg Blocked Task Time", values: data.data.map(item => item.avg_blocked_task_time) });
+      } catch (error) {
+        console.error("Error fetching Avg. Blocked Task Time data:", error);
+      }
+    };
+  
+    fetchAvgBlockedTaskTimeData();
   }, [dateRange]);
   
   useEffect(() => {
@@ -127,44 +221,7 @@ export default function MainPage() {
     fetchLeadTimeForChangesData();
   }, [dateRange]);
   
-
-
-
   
-
-
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const formatDate = (date) => date.toISOString().split('T')[0];
-      const metric = barGraphMainMetric.replace(/\s+/g, '_').toLowerCase();
-      const url = `http://127.0.0.1:5000/v1/correlation?start_date=${formatDate(dateRange[0])}&end_date=${formatDate(dateRange[1])}&main_metric=${metric}`;
-  
-      try {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error('Network response was not ok');
-        const data = await response.json();
-        const apiCorrelations = data.correlations || {};
-        const adjustedCorrelations = {};
-        for (const key in apiCorrelations) {
-          const standardizedKey = metricNameMap[key] || key;
-          adjustedCorrelations[standardizedKey] = apiCorrelations[key];
-        }
-  
-        const fullCorrelations = {...dummyCorrelationData.correlations};
-        for (const key in adjustedCorrelations) {
-          fullCorrelations[key] = adjustedCorrelations[key];
-        }
-  
-        setCorrelations({correlations: fullCorrelations});
-      } catch (error) {
-        console.error('Failed to fetch correlations:', error);
-        setCorrelations(dummyCorrelationData);
-      }
-    };
-  
-    fetchData();
-  }, [dateRange, barGraphMainMetric]);
   
 
 
@@ -194,7 +251,7 @@ export default function MainPage() {
     margin: "1rem",
     padding: "1rem",
     border: "1px solid #ccc",
-    borderRadius: "4px",
+    borderRadius: "20px",
     backgroundColor: "#ffffff",
     boxShadow: "0px 4px 8px rgba(0,0,0,0.1)"
   }
@@ -202,7 +259,7 @@ export default function MainPage() {
   return (
     <Box sx={{ display: "flex", flexDirection: "column", backgroundColor: "#f5f6f7", alignItems: 'center'}}>
       <Typography variant='h3' color='primary.dark' sx={{margin: '2rem 1rem 1rem 1rem'}}>UCICapstone2024 Enterprise Metric Analysis Tool</Typography>
-      <RangeSlider sx={{...cardBackgroundStyle, width: '80%'}} range={dateRange} onRangeChange={handleRangeChange} />
+      <RangeSlider sx={{...cardBackgroundStyle, width: '89.5%'}} range={dateRange} onRangeChange={handleRangeChange} />
       <Box sx={{ display: "flex", flexDirection: "row" }}>
         <MetricList
           sx={cardBackgroundStyle}

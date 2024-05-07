@@ -72,12 +72,11 @@ export default function MainPage() {
       });
 
       const results = await Promise.all(fetchPromises);
-      const filteredResults = results.filter(metric => lineGraphMetrics[metric.name]);
-      setAllMetricsData(filteredResults);
+      setAllMetricsData(results);
     };
 
     fetchData();
-  }, [dateRange, lineGraphMetrics]);
+  }, [dateRange]);
 
 
   
@@ -141,6 +140,8 @@ useEffect(() => {
     boxShadow: "0px 4px 8px rgba(0,0,0,0.1)"
   }
 
+  const filteredMetrics = allMetricsData.filter(metric => lineGraphMetrics[metric.name]);
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column", backgroundColor: "#f5f6f7", alignItems: 'center'}}>
       <Typography variant='h3' color='primary.dark' sx={{margin: '2rem 1rem 1rem 1rem'}}>UCICapstone2024 Enterprise Metric Analysis Tool</Typography>
@@ -173,7 +174,7 @@ useEffect(() => {
         />
         <LineGraph
           sx={cardBackgroundStyle}
-          metrics={allMetricsData}
+          metrics={filteredMetrics}
         />
       </Box>
     </Box>

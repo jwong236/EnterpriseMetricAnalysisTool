@@ -124,7 +124,7 @@ def correlation():
     # Extract data points
     metrics_map = {
         'deployment_frequency': [d['deployments'] for d in deployment_data],
-        'lead_time_for_changes': [lt['total_lead_time'] for lt in lead_time_data],
+        'lead_time_for_changes': [lt['average_lead_time'] for lt in lead_time_data],
         'avg_pull_request_turnaround_time': [tt['avg_pull_request_turnaround_time'] for tt in turnaround_time_data],
         'avg_blocked_task_time': [bt['avg_blocked_task_time'] for bt in blocked_task_time_data],
         'avg_retro_mood': [rm['avg_retro_mood'] for rm in retro_mood_data],

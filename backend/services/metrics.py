@@ -88,14 +88,15 @@ def calculate_lead_time_for_changes(start_date, end_date):
             week_end = weeks[i + 1] - pd.Timedelta(days=1)
             weekly_filtered_df = df[(df['Day'] >= week_start) & (df['Day'] <= week_end)]
             total_lead_time = weekly_filtered_df['Time to Change Hours'].sum()
+            average_lead_time = total_lead_time / 5
             weekly_lead_times.append({
                 "week_range": f"{week_start.strftime('%Y-%m-%d')} to {week_end.strftime('%Y-%m-%d')}",
-                "total_lead_time": int(total_lead_time)
+                "average_lead_time": round(average_lead_time)
             })
 
         return jsonify({
             "data": weekly_lead_times,
-            "description": f"Total lead time for changes from {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}"
+            "description": f"Average lead time for changes from {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}"
         })
     except FileNotFoundError:
         return jsonify({"error": "Lead Time for Changes data file not found."}), 404

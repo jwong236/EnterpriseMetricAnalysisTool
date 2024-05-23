@@ -51,7 +51,7 @@ export default function MainPage() {
   useEffect(() => {
     const metricEndpoints = [
       { name: "Deployment Frequency", endpoint: "deployment_frequency", key: "deployments" },
-      { name: "Lead Time for Changes", endpoint: "lead_time_for_changes", key: "total_lead_time" },
+      { name: "Lead Time for Changes", endpoint: "lead_time_for_changes", key: "average_lead_time" },
       { name: "Avg Retro Mood", endpoint: "avg_retro_mood", key: "avg_retro_mood" },
       { name: "Open Issue Bug Count", endpoint: "open_issue_bug_count", key: "open_issue_bug_count" },
       { name: "Refinement Changes", endpoint: "refinement_changes_count", key: "refinement_changes_count" },

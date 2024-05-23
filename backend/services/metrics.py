@@ -161,16 +161,16 @@ def calculate_avg_pull_request_turnaround_time(start_date, end_date):
             
             weekly_turnaround.append({
                 "week_range": f"{week_start.strftime('%Y-%m-%d')} to {week_end.strftime('%Y-%m-%d')}",
-                "avg_pull_request_turnaround_time": avg_pull_request_turnaround_time,
+                "avg_pull_request_turnaround_time": round(avg_pull_request_turnaround_time),
                 "pr_count": pr_count,
-                "total_turnaround_time": total_week_turnaround
+                "total_turnaround_time": round(total_week_turnaround)
             })
 
         return jsonify({
             "data": weekly_turnaround,
-            "description": f"Pull Request Turnaround Time from {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}"
+            "description": f"Pull Request Merge Time from {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}"
         })
     except FileNotFoundError:
-        return jsonify({"error": "Turnaround time data file not found."}), 404
+        return jsonify({"error": "Merge time data file not found."}), 404
     except Exception as e:
         return jsonify({"error": f"An error occurred while processing your request: {str(e)}"}), 500

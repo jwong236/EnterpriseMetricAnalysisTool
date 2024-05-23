@@ -18,7 +18,7 @@ export default function MainPage() {
     "Avg Retro Mood",
     "Open Issue Bug Count",
     "Refinement Changes Count",
-    "Avg Pull Request Turnaround Time",
+    "Avg Pull Request Merge Time",
     "Avg Blocked Task Time"
   ];
 
@@ -28,7 +28,7 @@ export default function MainPage() {
     "Avg Retro Mood": "avg_retro_mood",
     "Open Issue Bug Count": "open_issue_bug_count",
     "Refinement Changes Count": "refinement_changes_count",
-    "Avg Pull Request Turnaround Time": "avg_pull_request_turnaround_time",
+    "Avg Pull Request Merge Time": "avg_pull_request_turnaround_time",
     "Avg Blocked Task Time": "avg_blocked_task_time"
   };
   const inverseMetricNameMap = Object.fromEntries(
@@ -55,7 +55,7 @@ export default function MainPage() {
       { name: "Avg Retro Mood", endpoint: "avg_retro_mood", key: "avg_retro_mood" },
       { name: "Open Issue Bug Count", endpoint: "open_issue_bug_count", key: "open_issue_bug_count" },
       { name: "Refinement Changes", endpoint: "refinement_changes_count", key: "refinement_changes_count" },
-      { name: "Avg Pull Request Turnaround Time", endpoint: "avg_pull_request_turnaround_time", key: "avg_pull_request_turnaround_time" },
+      { name: "Avg Pull Request Merge Time", endpoint: "avg_pull_request_turnaround_time", key: "avg_pull_request_turnaround_time" },
       { name: "Avg Blocked Task Time", endpoint: "avg_blocked_task_time", key: "avg_blocked_task_time" },
     ];
 

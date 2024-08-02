@@ -9,3 +9,4 @@ setuptools==68.2.2
 Werkzeug==3.0.2
 wheel==0.41.2
 pandas
+scipy

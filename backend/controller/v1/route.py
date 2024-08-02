@@ -129,8 +129,8 @@ def lead_time_for_changes():
     return service.calculate_lead_time_for_changes(start_date, end_date)
 
 
-@bp.route("/raw_metrics/avg_pull_request_turnaround_time")
-def avg_pull_request_turnaround_time():
+@bp.route("/raw_metrics/avg_pull_request_merge_time")
+def avg_pull_request_merge_time():
     start_date = request.args.get("start_date")
     end_date = request.args.get("end_date")
     if not start_date or not end_date:
@@ -141,7 +141,7 @@ def avg_pull_request_turnaround_time():
             400,
         )
 
-    return service.calculate_avg_pull_request_turnaround_time(start_date, end_date)
+    return service.calculate_avg_pull_request_merge_time(start_date, end_date)
 
 
 @bp.route("/raw_metrics/avg_blocked_task_time")

@@ -20,29 +20,45 @@ def generate_pr_merge_data():
     data = []
     pr_id = 100  # Starting PR ID
     for i in range(len(date_range)):
-        date_str = date_range[i].strftime("%Y-%m-%d")
+        start_time = datetime.datetime.combine(
+            date_range[i], datetime.time(9, 0)
+        )  # Start at 9:00 AM
         for _ in range(merges_per_day[i]):
             pr_id += 1
             team = np.random.choice(teams)
             repository = np.random.choice(repositories)
-            avg_merge_time = np.random.uniform(
+            merge_duration_hours = np.random.uniform(
                 1, 72
             )  # Merge time between 1 and 72 hours
+            end_time = start_time + datetime.timedelta(hours=merge_duration_hours)
             author = np.random.choice(authors)
             reviewer = np.random.choice(reviewers)
             data.append(
-                [date_str, pr_id, team, repository, avg_merge_time, author, reviewer]
+                [
+                    start_time,
+                    end_time,
+                    pr_id,
+                    team,
+                    repository,
+                    merge_duration_hours,
+                    author,
+                    reviewer,
+                ]
             )
+            start_time += datetime.timedelta(
+                hours=np.random.uniform(1, 5)
+            )  # Increment start time for next PR
 
-    # Create DataFrame to write to csv
+    # Create DataFrame to write to CSV
     df = pd.DataFrame(
         data,
         columns=[
-            "date",
+            "Start_DateTime",
+            "End_DateTime",
             "pr_id",
             "team",
             "repository",
-            "avg_pull_request_merge_time",
+            "Duration_Hours",
             "author",
             "reviewer",
         ],
@@ -52,4 +68,6 @@ def generate_pr_merge_data():
 
 if __name__ == "__main__":
     generate_pr_merge_data()
-    print("Data generation complete. The file 'pr_merge_data.csv' has been created.")
+    print(
+        "Data generation complete. The file 'pull_request_merge_time_DD.csv' has been created."
+    )

@@ -53,12 +53,12 @@ def generate_pr_merge_data():
     df = pd.DataFrame(
         data,
         columns=[
-            "Start_DateTime",
-            "End_DateTime",
+            "start_datetime",
+            "end_datetime",
             "pr_id",
             "team",
             "repository",
-            "Duration_Hours",
+            "duration_hours",
             "author",
             "reviewer",
         ],

@@ -28,30 +28,29 @@ def correlation():
         start_date, end_date, constants.WEEK_START_DAY
     )
 
+    # 1. Fetch full json data for all metrics
     try:
-        # Fetching the data for all metrics and extracting JSON from the response
         deployment_response = service.calculate_deployment_frequency(
-            start_date.strftime("%Y-%m-%d"), end_date.strftime("%Y-%m-%d")
+            start_date, end_date
         )
         lead_time_response = service.calculate_lead_time_for_changes(
-            start_date.strftime("%Y-%m-%d"), end_date.strftime("%Y-%m-%d")
+            start_date, end_date
         )
-        turnaround_time_response = service.calculate_avg_pull_request_turnaround_time(
-            start_date.strftime("%Y-%m-%d"), end_date.strftime("%Y-%m-%d")
+        turnaround_time_response = service.calculate_avg_pull_request_merge_time(
+            start_date, end_date
         )
         blocked_task_time_response = service.calculate_avg_blocked_task_time(
-            start_date.strftime("%Y-%m-%d"), end_date.strftime("%Y-%m-%d")
+            start_date, end_date
         )
-        retro_mood_response = service.calculate_avg_retro_mood(
-            start_date.strftime("%Y-%m-%d"), end_date.strftime("%Y-%m-%d")
-        )
+        retro_mood_response = service.calculate_avg_retro_mood(start_date, end_date)
         open_issue_bug_count_response = service.calculate_open_issue_bug_count(
-            start_date.strftime("%Y-%m-%d"), end_date.strftime("%Y-%m-%d")
+            start_date, end_date
         )
         refinement_changes_response = service.calculate_refinement_changes_count(
-            start_date.strftime("%Y-%m-%d"), end_date.strftime("%Y-%m-%d")
+            start_date, end_date
         )
 
+        # 2. Extract data field from responses
         deployment_data = deployment_response.get_json()["data"]
         lead_time_data = lead_time_response.get_json()["data"]
         turnaround_time_data = turnaround_time_response.get_json()["data"]
@@ -63,22 +62,22 @@ def correlation():
     except Exception as e:
         return jsonify({"error": f"Failed to fetch data: {str(e)}"}), 500
 
-    # Extract data points
+    # 3. Extract data points field for each metric
     metrics_map = {
-        "deployment_frequency": [d["deployments"] for d in deployment_data],
-        "lead_time_for_changes": [lt["average_lead_time"] for lt in lead_time_data],
-        "avg_pull_request_turnaround_time": [
-            tt["avg_pull_request_turnaround_time"] for tt in turnaround_time_data
+        constants.METRIC_ID[1]: [d[constants.CSV_FIELD[1]] for d in deployment_data],
+        constants.METRIC_ID[2]: [lt[constants.CSV_FIELD[2]] for lt in lead_time_data],
+        constants.METRIC_ID[3]: [
+            tt[constants.CSV_FIELD[3]] for tt in turnaround_time_data
         ],
-        "avg_blocked_task_time": [
-            bt["avg_blocked_task_time"] for bt in blocked_task_time_data
+        constants.METRIC_ID[4]: [
+            bt[constants.CSV_FIELD[4]] for bt in blocked_task_time_data
         ],
-        "avg_retro_mood": [rm["avg_retro_mood"] for rm in retro_mood_data],
-        "open_issue_bug_count": [
-            bc["open_issue_bug_count"] for bc in open_issue_bug_count_data
+        constants.METRIC_ID[5]: [rm[constants.CSV_FIELD[5]] for rm in retro_mood_data],
+        constants.METRIC_ID[6]: [
+            bc[constants.CSV_FIELD[6]] for bc in open_issue_bug_count_data
         ],
-        "refinement_changes_count": [
-            rc["refinement_changes_count"] for rc in refinement_changes_data
+        constants.METRIC_ID[7]: [
+            rc[constants.CSV_FIELD[7]] for rc in refinement_changes_data
         ],
     }
 
@@ -145,7 +144,7 @@ def avg_pull_request_merge_time():
 
 
 @bp.route("/raw_metrics/avg_blocked_task_time")
-def ave_blocked_task_time():
+def avg_blocked_task_time():
     start_date = request.args.get("start_date")
     end_date = request.args.get("end_date")
     if not start_date or not end_date:

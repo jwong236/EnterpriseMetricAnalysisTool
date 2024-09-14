@@ -123,13 +123,13 @@ def calculate_lead_time_for_changes(start_date, end_date):
             # Calculate the total and average lead time for the week
             total_lead_time = weekly_filtered_df["time_to_change_hours"].sum()
             num_entries = weekly_filtered_df.shape[0]
-            average_lead_time = total_lead_time / num_entries if num_entries > 0 else 0
+            avg_lead_time = total_lead_time / num_entries if num_entries > 0 else 0
             # Append the result to the list
             weekly_lead_times.append(
                 {
                     "week_range": f"{week_start.strftime('%Y-%m-%d')} to {week_end.strftime('%Y-%m-%d')}",
                     "total_lead_time": round(total_lead_time),
-                    "average_lead_time": round(average_lead_time),
+                    "avg_lead_time": round(avg_lead_time),
                 }
             )
 
@@ -353,11 +353,11 @@ def calculate_avg_pull_request_merge_time(start_date, end_date):
     try:
         # Load the data from the CSV file and convert the date columns to datetime
         df = pd.read_csv(csv_file)
-        df["Start_DateTime"] = pd.to_datetime(df["Start_DateTime"])
-        df["End_DateTime"] = pd.to_datetime(df["End_DateTime"])
+        df["start_datetime"] = pd.to_datetime(df["start_datetime"])
+        df["end_datetime"] = pd.to_datetime(df["end_datetime"])
         # Calculate the duration of each pull request in hours
         df["Duration_Hours"] = (
-            df["End_DateTime"] - df["Start_DateTime"]
+            df["end_datetime"] - df["start_datetime"]
         ).dt.total_seconds() / 3600
 
         # Adjust the provided date range based on the week start day
@@ -379,8 +379,8 @@ def calculate_avg_pull_request_merge_time(start_date, end_date):
             week_end = weeks[i + 1] - pd.Timedelta(days=1)
             # Calculate the contribution of each pull request to the current week
             df["week_contribution"] = df.apply(
-                lambda x: min(x["End_DateTime"], week_end)
-                - max(x["Start_DateTime"], week_start),
+                lambda x: min(x["end_datetime"], week_end)
+                - max(x["start_datetime"], week_start),
                 axis=1,
             )
             df["week_contribution"] = df["week_contribution"].dt.total_seconds() / 3600
@@ -467,7 +467,7 @@ def calculate_avg_blocked_task_time(start_date, end_date):
             # Calculate the total and average blocked time for the week
             total_blocked_time = weekly_filtered_df["blocked_hours"].sum()
             num_entries = weekly_filtered_df.shape[0]
-            average_blocked_time = (
+            avg_blocked_time = (
                 total_blocked_time / num_entries if num_entries > 0 else 0
             )
             # Append the result to the list
@@ -475,7 +475,7 @@ def calculate_avg_blocked_task_time(start_date, end_date):
                 {
                     "week_range": f"{week_start.strftime('%Y-%m-%d')} to {week_end.strftime('%Y-%m-%d')}",
                     "total_blocked_time": round(total_blocked_time),
-                    "average_blocked_time": round(average_blocked_time),
+                    "avg_blocked_time": round(avg_blocked_time),
                 }
             )
 

@@ -5,8 +5,8 @@ import datetime
 
 def main():
     # Define parameters
-    start_date = datetime.date(2023, 1, 2)
-    end_date = datetime.date(2023, 12, 31)
+    start_date = datetime.date(2023, 1, 1)
+    end_date = datetime.date(2024, 1, 1)
     date_range = pd.date_range(start=start_date, end=end_date, freq="W-MON")
     teams = ["cic", "itcm"]
     service_list = [

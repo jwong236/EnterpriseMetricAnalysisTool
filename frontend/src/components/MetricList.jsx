@@ -1,83 +1,150 @@
-import React from 'react';
-import { Box, Typography, FormControl, Select, MenuItem, FormGroup, FormControlLabel, Checkbox } from '@mui/material';
+import React, { useState, useEffect } from "react";
+import {
+  Box,
+  Typography,
+  FormControl,
+  Select,
+  MenuItem,
+  FormGroup,
+  FormControlLabel,
+  Checkbox,
+} from "@mui/material";
 
 export default function MetricList({
-    sx,
-    dropDownMetric,
-    metrics,
-    onDropDownMetricChange,
-    onMetricChange,
-    setMetrics,
-    showDropdownMetric = true
+  metricsList,
+  toggleDropdown = false,
+  setMainMetric,
+  setSelectedMetrics,
 }) {
-    const metricOptions = [
-        "Deployment Frequency",
-        "Lead Time for Changes",
-        "Avg Retro Mood",
-        "Open Issue Bug Count",
-        "Refinement Changes Count",
-        "Avg Pull Request Merge Time",
-        "Avg Blocked Task Time"
-    ];
+  // State to track which metrics are selected
+  const [metrics, setMetrics] = useState(
+    metricsList.reduce((acc, metric) => ({ ...acc, [metric]: false }), {})
+  );
 
-    const isAllSelected = metricOptions.every(metric => metrics[metric]);
+  // Dropdown selection state
+  const [dropDownMetric, setDropDownMetric] = useState("");
 
-    const handleAllChecked = (event) => {
-        const newMetrics = { ...metrics };
-        metricOptions.forEach(metric => {
-            newMetrics[metric] = event.target.checked;
-        });
-        setMetrics(newMetrics);
-    };
-
-    return (
-        <Box sx={sx}>
-            <Typography variant="h4" gutterBottom>
-                Metrics
-            </Typography>
-            {showDropdownMetric && (
-                <FormControl fullWidth>
-                    <Select
-                        value={dropDownMetric}
-                        onChange={onDropDownMetricChange}
-                        displayEmpty
-                    >
-                        {metricOptions.map(metric => (
-                            <MenuItem key={metric} value={metric}>{metric}</MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
-            )}
-            <FormGroup>
-                <FormControlLabel
-                    control={
-                        <Checkbox
-                            checked={isAllSelected}
-                            onChange={handleAllChecked}
-                            indeterminate={!isAllSelected && metricOptions.some(metric => metrics[metric])}
-                        />
-                    }
-                    label="Select All"
-                />
-                {metricOptions.map(metric => (
-                    <FormControlLabel
-                        key={metric}
-                        control={
-                            <Checkbox
-                                checked={metrics[metric]}
-                                onChange={onMetricChange}
-                                name={metric}
-                                disabled={metric === dropDownMetric && showDropdownMetric}
-                            />
-                        }
-                        label={metric}
-                        sx={{
-                            color: metric === dropDownMetric && showDropdownMetric ? 'grey.500' : 'inherit',
-                            textDecoration: metric === dropDownMetric && showDropdownMetric ? 'line-through' : 'none'
-                        }}
-                    />
-                ))}
-            </FormGroup>
-        </Box>
+  // Update selectedBarGraphMetrics whenever metrics change
+  useEffect(() => {
+    const selectedMetrics = Object.keys(metrics).filter(
+      (metric) => metrics[metric]
     );
+    setSelectedMetrics(selectedMetrics);
+  }, [metrics, setSelectedMetrics]);
+
+  // Check if all metrics (except the one in dropDownMetric) are selected
+  const isAllSelected = metricsList
+    .filter((metric) => metric !== dropDownMetric)
+    .every((metric) => metrics[metric]);
+
+  // Handle "Select All" checkbox change (exclude disabled metric)
+  const handleAllChecked = (event) => {
+    const newMetrics = metricsList.reduce((acc, metric) => {
+      if (metric !== dropDownMetric) {
+        acc[metric] = event.target.checked;
+      } else {
+        acc[metric] = false;
+      }
+      return acc;
+    }, {});
+    setMetrics(newMetrics);
+  };
+
+  // Handle individual metric checkbox change
+  const onMetricChange = (event) => {
+    const { name, checked } = event.target;
+    setMetrics((prevMetrics) => ({ ...prevMetrics, [name]: checked }));
+  };
+
+  // Handle dropdown change and uncheck the metric that is selected in the dropdown
+  const onDropDownMetricChange = (event) => {
+    const selectedMetric = event.target.value;
+    setDropDownMetric(selectedMetric);
+    setMainMetric(selectedMetric);
+
+    // Uncheck the selected dropdown metric
+    setMetrics((prevMetrics) => ({
+      ...prevMetrics,
+      [selectedMetric]: false,
+    }));
+  };
+
+  // Style for the card component
+  const cardStyle = {
+    padding: "1rem",
+    border: "1px solid #ccc",
+    borderRadius: "20px",
+    backgroundColor: "#ffffff",
+    boxShadow: "0px 4px 8px rgba(0,0,0,0.1)",
+    flex: 1,
+  };
+
+  return (
+    <Box sx={cardStyle}>
+      <Typography variant="h4" gutterBottom>
+        Metrics
+      </Typography>
+
+      {/* Dropdown for selecting main metric */}
+      {toggleDropdown && (
+        <FormControl fullWidth sx={{ mb: 2 }}>
+          <Select
+            value={dropDownMetric}
+            onChange={onDropDownMetricChange}
+            displayEmpty
+          >
+            <MenuItem value="">
+              <Typography>Select a main metric</Typography>
+            </MenuItem>
+            {metricsList.map((metric) => (
+              <MenuItem key={metric} value={metric}>
+                {metric}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      )}
+
+      {/* Metric checkboxes */}
+      <FormGroup>
+        {/* Select All checkbox */}
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={isAllSelected}
+              onChange={handleAllChecked}
+              indeterminate={
+                !isAllSelected &&
+                metricsList
+                  .filter((metric) => metric !== dropDownMetric)
+                  .some((metric) => metrics[metric])
+              }
+            />
+          }
+          label="Select All"
+        />
+
+        {/* Individual metric checkboxes */}
+        {metricsList.map((metric) => (
+          <FormControlLabel
+            key={metric}
+            control={
+              <Checkbox
+                checked={metrics[metric]}
+                onChange={onMetricChange}
+                name={metric}
+                disabled={metric === dropDownMetric}
+              />
+            }
+            label={metric}
+            sx={{
+              color: metric === dropDownMetric ? "grey.500" : "inherit",
+              textDecoration:
+                metric === dropDownMetric ? "line-through" : "none",
+            }}
+          />
+        ))}
+      </FormGroup>
+    </Box>
+  );
 }

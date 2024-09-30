@@ -1,30 +1,43 @@
 import React, { useState, useEffect } from "react";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { Box, Typography, useTheme, CircularProgress } from "@mui/material";
+import useCorrelations from "../hooks/useCorrelations";
+import { metricIds, metricsById } from "../utils/constants";
 
-const BarGraph = ({ sx, mainMetric, correlations, metricNames }) => {
+const rightCardBackgroundStyle = {
+  width: "100%",
+  padding: "1rem",
+  border: "1px solid #ccc",
+  borderRadius: "20px",
+  backgroundColor: "#ffffff",
+  boxShadow: "0px 4px 8px rgba(0,0,0,0.1)",
+  flex: 3,
+};
+
+const BarGraph = ({ mainMetric, dateRange }) => {
   const theme = useTheme();
   const [loading, setLoading] = useState(true);
 
-  // Use Object.entries on correlations.correlations directly
-  const correlationEntries = Object.entries(correlations.correlations || {});
+  const correlations =
+    useCorrelations(dateRange, mainMetric)?.correlations || {};
 
-  // Set loading state based on whether there are any correlations
   useEffect(() => {
-    setLoading(correlationEntries.length === 0);
-  }, [correlationEntries]);
+    setLoading(Object.keys(correlations).length === 0);
+  }, [correlations]);
 
-  // Process correlations and map metric keys to readable names using metricNames
-  const processedCorrelations = correlationEntries
+  // Process correlations by mapping IDs to human-readable metric names
+  const processedCorrelations = Object.entries(correlations)
+    .filter(([metric]) => {
+      return metricIds[metric]; // Check if the metric has a valid ID
+    })
     .sort((a, b) => Math.abs(b[1]) - Math.abs(a[1])) // Sort by absolute correlation value
     .map(([metric, value]) => ({
-      // Use the metricNames mapping to get the human-readable name
-      metric: metricNames[metric] || metric, // Fallback to the original name if not found
+      metric: metricsById[metricIds[metric]] || metric, // Use the metric ID to get the human-readable name
       value: value,
     }));
 
   return (
-    <Box sx={sx}>
+    <Box sx={rightCardBackgroundStyle}>
       <Typography variant="h6" sx={{ mb: 2 }}>
         {mainMetric} Correlation Data
       </Typography>
@@ -46,13 +59,14 @@ const BarGraph = ({ sx, mainMetric, correlations, metricNames }) => {
             ]}
             series={[
               {
-                dataKey: "value", // Use "value" as the x-axis
-                valueFormatter: (value) => `${value.toFixed(2)} units`, // Format the values
+                dataKey: "value",
+                valueFormatter: (value) =>
+                  `${value.toFixed(5)} correlation value`,
               },
             ]}
             layout="horizontal"
             height={500}
-            margin={{ left: 210 }} // Adjust the left margin for readability
+            margin={{ left: 210 }}
           />
         </Box>
       )}

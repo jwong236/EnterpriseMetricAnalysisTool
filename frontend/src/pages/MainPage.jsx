@@ -4,9 +4,6 @@ import BarGraph from "../components/BarGraph";
 import MetricList from "../components/MetricList";
 import RangeSlider from "../components/SprintRangeSlider";
 import LineGraph from "../components/LineGraph";
-import { dateToSprintNumber } from "../utils/dateToSprint";
-import useCorrelations from "../hooks/useCorrelations";
-import useMetricsData from "../hooks/useMetricsData";
 import { metricsList } from "../utils/constants";
 
 export default function MainPage() {
@@ -95,6 +92,11 @@ export default function MainPage() {
               toggleDropdown={true}
               setMainMetric={setMainMetric}
               setSelectedMetrics={setSelectedBarGraphMetrics}
+            />
+            <BarGraph
+              mainMetric={mainMetric}
+              selectedMetrics={selectedBarGraphMetrics}
+              dateRange={dateRange}
             />
           </Box>
 

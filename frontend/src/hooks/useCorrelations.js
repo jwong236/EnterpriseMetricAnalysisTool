@@ -4,7 +4,7 @@ import { formatDate } from "../utils/formatDate";
 
 export default function useCorrelations(dateRange, barGraphMainMetric) {
   const [correlations, setCorrelations] = useState({});
-  const root_path = "http://127.0.0.1:5000"; // Example root path
+  const root_path = "http://127.0.0.1:5000";
 
   useEffect(() => {
     const fetchData = async () => {

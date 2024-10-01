@@ -13,24 +13,55 @@ const rightCardBackgroundStyle = {
   flex: 3,
 };
 
-const LineGraph = ({ metrics, dateRange }) => {
+const LineGraph = ({ selectedMetrics, dateRange }) => {
   const offset = 1;
+  const allMetrics = useMetricsData(dateRange); // Fetch all metric data
   const [loading, setLoading] = useState(true);
-  const allMetrics = useMetricsData(dateRange);
 
-  const maxXAxisValue = metrics.reduce(
-    (max, metric) => Math.max(max, metric.values.length),
+  useEffect(() => {
+    if (allMetrics.length > 0) {
+      setLoading(false); // Stop loading when data is available
+    }
+  }, [allMetrics]);
+
+  // Filter allMetrics to include only selectedMetrics
+  const filteredMetrics = allMetrics.filter((metric) =>
+    selectedMetrics.includes(metric.name)
+  );
+
+  // Calculate the maximum length of the metric values for the x-axis
+  const maxXAxisValue = filteredMetrics.reduce(
+    (max, metric) => Math.max(max, metric.data.length),
     0
   );
+
+  // Generate x-axis data based on the longest metric
   const xAxisData = Array.from(
     { length: maxXAxisValue },
     (_, i) => i / 2 + offset
   );
 
-  const series = metrics.map((metric) => ({
-    label: metric.name,
-    data: metric.values,
-  }));
+  // Extract the correct key from metricsMapping for each metric
+  console.log(filteredMetrics);
+  const series = filteredMetrics
+    .map((metric) => {
+      const metricName = metric.name;
+      const metricKey = metricsMapping[metricName]?.key;
+
+      if (!metricKey) {
+        console.error(`No key found for metric: ${metricName}`);
+        return null;
+      }
+
+      // Extract the values using the correct key (e.g., retro_mood, avg_lead_time, etc.)
+      const data = metric.data.map((item) => item[metricKey]);
+
+      return {
+        label: metricName,
+        data: data,
+      };
+    })
+    .filter(Boolean); // Remove null entries in case of errors
 
   return (
     <Box sx={rightCardBackgroundStyle}>

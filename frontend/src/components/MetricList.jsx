@@ -40,13 +40,13 @@ export default function MetricList({
 
   // Check if all metrics (except the one in dropDownMetric) are selected
   const isAllSelected = metricsList
-    .filter((metric) => metric !== dropDownMetric)
+    .filter((metric) => !toggleDropdown || metric !== dropDownMetric)
     .every((metric) => metrics[metric]);
 
   // Handle "Select All" checkbox change (exclude disabled metric)
   const handleAllChecked = (event) => {
     const newMetrics = metricsList.reduce((acc, metric) => {
-      if (metric !== dropDownMetric) {
+      if (!toggleDropdown || metric !== dropDownMetric) {
         acc[metric] = event.target.checked;
       } else {
         acc[metric] = false;
@@ -119,7 +119,9 @@ export default function MetricList({
               indeterminate={
                 !isAllSelected &&
                 metricsList
-                  .filter((metric) => metric !== dropDownMetric)
+                  .filter(
+                    (metric) => !toggleDropdown || metric !== dropDownMetric
+                  )
                   .some((metric) => metrics[metric])
               }
             />
@@ -136,14 +138,19 @@ export default function MetricList({
                 checked={metrics[metric]}
                 onChange={onMetricChange}
                 name={metric}
-                disabled={metric === dropDownMetric}
+                disabled={toggleDropdown && metric === dropDownMetric}
               />
             }
             label={metric}
             sx={{
-              color: metric === dropDownMetric ? "grey.500" : "inherit",
+              color:
+                toggleDropdown && metric === dropDownMetric
+                  ? "grey.500"
+                  : "inherit",
               textDecoration:
-                metric === dropDownMetric ? "line-through" : "none",
+                toggleDropdown && metric === dropDownMetric
+                  ? "line-through"
+                  : "none",
             }}
           />
         ))}

@@ -4,12 +4,12 @@ import { metricsMapping } from "../utils/constants";
 
 export default function useMetricsData(dateRange) {
   const [allMetricsData, setAllMetricsData] = useState([]);
-  const root_path = "http://127.0.0.1:5000"; // Example root path
+  const root_path = "http://127.0.0.1:5000";
 
   useEffect(() => {
     const fetchData = async () => {
-      const startDate = formatDate(dateRange[0]); // Format start date
-      const endDate = formatDate(dateRange[1]); // Format end date
+      const startDate = formatDate(dateRange[0]); // Format start date to YYYY-MM-DD
+      const endDate = formatDate(dateRange[1]); // Format start date to YYYY-MM-DD
 
       const fetchPromises = Object.keys(metricsMapping).map((metric) => {
         // Convert the metric name to a key that matches the format in metricIds
@@ -18,12 +18,11 @@ export default function useMetricsData(dateRange) {
 
         if (!metricId) {
           console.error(`No ID found for metric: ${metricKey}`);
-          return { name: metric, values: [] }; // Return empty values if ID not found
+          return { name: metric, data: [] }; // Return empty values if ID not found
         }
 
         // Derive the API endpoint from the metric key directly
         const endpoint = metricKey;
-        const key = metricKey; // Assume the key used in API response matches the metric key
 
         const url = `${root_path}/v1/raw_metrics/${endpoint}?start_date=${startDate}&end_date=${endDate}`;
 
@@ -35,11 +34,11 @@ export default function useMetricsData(dateRange) {
           })
           .then((data) => ({
             name: metric,
-            values: data.data,
+            data: data.data,
           }))
           .catch((error) => {
             console.error(`Error fetching data for ${metric}:`, error);
-            return { name: metric, values: [] };
+            return { name: metric, data: [] };
           });
       });
 

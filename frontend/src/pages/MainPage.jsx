@@ -21,7 +21,6 @@ export default function MainPage() {
   const handleRangeChange = (newRange) => {
     setDateRange(newRange);
   };
-
   return (
     <Box
       sx={{
@@ -83,6 +82,10 @@ export default function MainPage() {
               metricsList={Object.keys(metricsMapping)}
               toggleDropdown={false}
               setSelectedMetrics={setSelectedLineGraphMetrics}
+            />
+            <LineGraph
+              selectedMetrics={selectedLineGraphMetrics}
+              dateRange={dateRange}
             />
           </Box>
         </Box>

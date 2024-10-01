@@ -16,15 +16,21 @@ export default function MetricList({
   setMainMetric,
   setSelectedMetrics,
 }) {
-  // State to track which metrics are selected
+  // Default value for the dropdown (Deployment Frequency)
+  const defaultMetric = "Deployment Frequency";
+
+  // State to track which metrics are selected, unchecking "Deployment Frequency" by default
   const [metrics, setMetrics] = useState(
-    metricsList.reduce((acc, metric) => ({ ...acc, [metric]: false }), {})
+    metricsList.reduce((acc, metric) => {
+      acc[metric] = metric !== defaultMetric; // Uncheck "Deployment Frequency" initially
+      return acc;
+    }, {})
   );
 
-  // Dropdown selection state
-  const [dropDownMetric, setDropDownMetric] = useState("");
+  // Dropdown selection state, defaulting to "Deployment Frequency"
+  const [dropDownMetric, setDropDownMetric] = useState(defaultMetric);
 
-  // Update selectedBarGraphMetrics whenever metrics change
+  // Effect to update selected metrics when metrics change
   useEffect(() => {
     const selectedMetrics = Object.keys(metrics).filter(
       (metric) => metrics[metric]
@@ -93,9 +99,6 @@ export default function MetricList({
             onChange={onDropDownMetricChange}
             displayEmpty
           >
-            <MenuItem value="">
-              <Typography>Select a main metric</Typography>
-            </MenuItem>
             {metricsList.map((metric) => (
               <MenuItem key={metric} value={metric}>
                 {metric}

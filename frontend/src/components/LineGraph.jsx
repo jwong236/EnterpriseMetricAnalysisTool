@@ -1,16 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { LineChart } from "@mui/x-charts/LineChart";
 import { Box, Typography, CircularProgress } from "@mui/material";
+import useMetricsData from "../hooks/useMetricsData";
+import { metricsMapping } from "../utils/constants";
 
-const LineGraph = ({ metrics, offset }) => {
-  if (offset === undefined || offset === null) offset = 1;
+const rightCardBackgroundStyle = {
+  padding: "1rem",
+  border: "1px solid #ccc",
+  borderRadius: "20px",
+  backgroundColor: "#ffffff",
+  boxShadow: "0px 4px 8px rgba(0,0,0,0.1)",
+  flex: 3,
+};
+
+const LineGraph = ({ metrics, dateRange }) => {
+  const offset = 1;
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (metrics && metrics.length > 0) {
-      setLoading(false);
-    }
-  }, [metrics]);
+  const allMetrics = useMetricsData(dateRange);
 
   const maxXAxisValue = metrics.reduce(
     (max, metric) => Math.max(max, metric.values.length),
@@ -27,7 +33,7 @@ const LineGraph = ({ metrics, offset }) => {
   }));
 
   return (
-    <Box sx={sx}>
+    <Box sx={rightCardBackgroundStyle}>
       <Typography variant="h5" gutterBottom>
         Metrics Over Time
       </Typography>

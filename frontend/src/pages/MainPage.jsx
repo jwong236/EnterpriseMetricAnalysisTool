@@ -4,26 +4,12 @@ import BarGraph from "../components/BarGraph";
 import MetricList from "../components/MetricList";
 import RangeSlider from "../components/SprintRangeSlider";
 import LineGraph from "../components/LineGraph";
-import { metricsList } from "../utils/constants";
+import { metricsMapping } from "../utils/constants";
 
 export default function MainPage() {
   const [mainMetric, setMainMetric] = useState("Deployment Frequency");
   const [selectedBarGraphMetrics, setSelectedBarGraphMetrics] = useState([]);
   const [selectedLineGraphMetrics, setSelectedLineGraphMetrics] = useState([]);
-
-  // Logging
-  useEffect(() => {
-    console.log("mainMetric updated to", mainMetric);
-  }, [mainMetric]);
-  useEffect(() => {
-    console.log("selectedBarGraphMetrics updated to", selectedBarGraphMetrics);
-  }, [selectedBarGraphMetrics]);
-  useEffect(() => {
-    console.log(
-      "selectedLineGraphMetrics updated to",
-      selectedLineGraphMetrics
-    );
-  }, [selectedLineGraphMetrics]);
 
   // State for managing the selected date range
   const [dateRange, setDateRange] = useState([
@@ -34,15 +20,6 @@ export default function MainPage() {
   // Handler for when the date range is updated via RangeSlider
   const handleRangeChange = (newRange) => {
     setDateRange(newRange);
-  };
-
-  const rightCardBackgroundStyle = {
-    padding: "1rem",
-    border: "1px solid #ccc",
-    borderRadius: "20px",
-    backgroundColor: "#ffffff",
-    boxShadow: "0px 4px 8px rgba(0,0,0,0.1)",
-    flex: 3,
   };
 
   return (
@@ -88,7 +65,7 @@ export default function MainPage() {
           <Box sx={{ display: "flex", flexDirection: "row", gap: "2rem" }}>
             {/* Bar graph MetricList*/}
             <MetricList
-              metricsList={metricsList}
+              metricsList={Object.keys(metricsMapping)}
               toggleDropdown={true}
               setMainMetric={setMainMetric}
               setSelectedMetrics={setSelectedBarGraphMetrics}
@@ -103,7 +80,7 @@ export default function MainPage() {
           <Box sx={{ display: "flex", flexDirection: "row", gap: "2rem" }}>
             {/* The line graph */}
             <MetricList
-              metricsList={metricsList}
+              metricsList={Object.keys(metricsMapping)}
               toggleDropdown={false}
               setSelectedMetrics={setSelectedLineGraphMetrics}
             />

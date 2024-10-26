@@ -1,30 +1,122 @@
-# UCI | SAP CAPSTONE PROJECT 
+# Enterprise Metric Analysis Tool (EMAT)
 
-# Introduction 
-This repo contains frontend and backend codes:
-- Frontend: Vite with React and Javascript
-- Backend: Flask
+A data analysis tool to enhance productivity and developer experience by analyzing Scrum team metrics and visualizing trends. Developed as part of a UCI x SAP Capstone Project and demonstrated at UCI’s ICS fair, EMAT uses React (frontend) and Flask (backend) for a seamless, data-driven experience. For more details on our journey, research, and documentation, see the [Project Journey and Research](#project-journey-and-research) section.
 
-# Frontend
+## Table of Contents
+- [About the Project](#about-the-project)
+- [Features](#features)
+- [Screenshots and Demo](#screenshots-and-demo)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Technologies Used](#technologies-used)
+- [Data Disclaimer](#data-disclaimer)
+- [Project Journey and Research](#project-journey-and-research)
+- [Acknowledgments](#acknowledgments)
 
-# Backend
-Python version: `3.12.2` \
-Flask version: `3.0.3` \
-**NOTE: I adviced you having a virtual environment for the project. If you have any issue with creating an env, feel free to contact Liam.**
+## About the Project
 
-### Basic Commands
-To run the flask server: `flask run` \
-Install requirements: use `pip install -r requirements.txt` \
+EMAT, developed in collaboration with SAP and inspired by DevOps frameworks such as DORA, SPACE, and DevEx, connects to SAP’s internal Hyperspace Portal, Jira, and GitHub to extract and analyze Scrum team metrics, generating valuable insights to enhance productivity. Using the DevEx framework, it offers insights to help Scrum teams enhance productivity, improve sprint velocity, and make data-driven decisions. An important part of the project involved determining which metrics to use and creating these metrics from scratch.
 
-### Dependency
-Install requirements: use `pip install -r requirements.txt`
-Install new packages and update requirements: 
-- **NOTE: If you are not using virtual enviornment for this project, I suggested you talk with the team before you modify the file.**
-- If you have a clean/pure env for this project, like creating a conda env, follow the following steps.
-- do `pip install [packagename]`, which means you install the package you need.
-- do `pip freeze > requirements.txt` to load/update all the required packages to the doc, which means after you install the package, you should run this command to update the new package info to the `requirements.txt`.
+## Features
 
-### Document Structure
-tbd
-### API Document
-tbd
+- **Data Integration**: Extracts and combines data from Hyperspace, Jira, and GitHub for comprehensive Scrum team analysis. (This repository uses fabricated data, see section [Data Disclaimer](#data-disclaimer))
+- **Custom Metrics**: Includes newly created metrics inspired by and following the SPACE and DORA frameworks, as well as metrics imported from SAP's internal system, providing a comprehensive view of team performance.
+- **Interactive visualization**: Displays key metrics using bar graphs for correlations and line graphs for metric fluctuations, helping teams explore productivity trends and identify bottlenecks. Visualizes interactions to support data-driven decision-making and improvement.
+- **Adjustable Time Range**: Adjust data by date or sprint number to visualize past performance, compare sprints, and identify trends over time. This helps teams analyze historical data for better decision-making.
+## Screenshots and Demo
+
+Here’s a quick look at EMAT in action:
+
+### Full Page Screenshot
+
+![Dashboard Screenshot](linktoscreenshot)
+
+### Interactive Demo
+
+![Interactive Demo GIF](linktogif)
+
+### Live Demo
+[Click here to try the application yourself!](Linktodeployment) (Not activate yet)
+
+## Installation
+
+To run the EMAT application locally, follow these steps:
+### 0. Prerequisites
+- Python: Version 3.8 or higher
+- Node.js: Version 16.x or higher
+- npm: Version 8.x or higher
+- Git: Most recent version
+
+### 1. Clone the Repository
+```sh
+git clone https://github.com/jwong236/EnterpriseMetricAnalysisTool
+```
+### 2. Virtual Environment (Optional but recommended)
+1. Create virtual environment
+```sh
+python -m venv env
+```
+
+2. Activate virtual environment:
+- On Windows
+    ```sh
+    env/Scripts/activate
+    ```
+- On macOS/Linux:
+    ```sh
+    source env/bin/activate
+    ```
+### 3. Backend Setup
+
+1. Navigate to the backend directory:
+   ```sh
+   cd backend
+   ```
+
+3. Install requirements:
+   ```sh
+   pip install -r requirements.txt
+   ```
+4. Start the Flask server:
+   ```sh
+   flask run
+   ```
+
+### 4. Frontend Setup
+1. Open new terminal (If needed)
+2. Navigate to the frontend directory:
+   ```sh
+   cd frontend
+   ```
+3. Install dependencies:
+   ```sh
+   npm install
+   ```
+4. Start the development server:
+   ```sh
+   npm run dev
+   ```
+
+## Usage
+
+Navigate to the local development URL shown in your terminal, or copy and paste http://localhost:5173/ into your browser. You can also click the link directly.
+
+## Technologies Used
+
+- **Frontend**: Vite with React and JavaScript
+- **Backend**: Flask and Python
+- **Database**: CSV files
+
+## Data Disclaimer
+
+This project initially used data from SAP's internal systems. For the purpose of this demonstrative repository, all data is fabricated and generated from scripts to simulate real-world scenarios.
+
+## Project Journey and Research
+
+If you would like to see our project journey in more detail, including research methodology, documentation and presentations, here is a more in-depth dive:
+- **UCI x SAP Capstone Project**: [here](docs/project_journey.pdf)
+
+## Acknowledgments
+
+Special thanks to the SAP teams for their support throughout the project, as well as our mentors Prof. Dr. Tobias Schimmer, Paige Perusset, and Julian Egbert 
+

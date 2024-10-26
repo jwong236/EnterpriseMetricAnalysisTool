@@ -3,6 +3,7 @@
 A data analysis tool to enhance productivity and developer experience by analyzing Scrum team metrics and visualizing trends. Developed as part of a UCI x SAP Capstone Project and demonstrated at UCI’s ICS fair, EMAT uses React (frontend) and Flask (backend) for a seamless, data-driven experience. For more details on our journey, research, and documentation, see the [Project Journey and Research](#project-journey-and-research) section.
 
 ## Table of Contents
+
 - [About the Project](#about-the-project)
 - [Features](#features)
 - [Screenshots and Demo](#screenshots-and-demo)
@@ -23,6 +24,7 @@ EMAT, developed in collaboration with SAP and inspired by DevOps frameworks such
 - **Custom Metrics**: Includes newly created metrics inspired by and following the SPACE and DORA frameworks, as well as metrics imported from SAP's internal system, providing a comprehensive view of team performance.
 - **Interactive visualization**: Displays key metrics using bar graphs for correlations and line graphs for metric fluctuations, helping teams explore productivity trends and identify bottlenecks. Visualizes interactions to support data-driven decision-making and improvement.
 - **Adjustable Time Range**: Adjust data by date or sprint number to visualize past performance, compare sprints, and identify trends over time. This helps teams analyze historical data for better decision-making.
+
 ## Screenshots and Demo
 
 Here’s a quick look at EMAT in action:
@@ -36,53 +38,64 @@ Here’s a quick look at EMAT in action:
 ![Interactive Demo GIF](linktogif)
 
 ### Live Demo
+
 [Click here to try the application yourself!](Linktodeployment) (Not activate yet)
 
 ## Installation
 
 To run the EMAT application locally, follow these steps:
+
 ### 0. Prerequisites
+
 - Python: Version 3.8 or higher
 - Node.js: Version 16.x or higher
 - npm: Version 8.x or higher
 - Git: Most recent version
 
 ### 1. Clone the Repository
+
 ```sh
 git clone https://github.com/jwong236/EnterpriseMetricAnalysisTool
 ```
+
 ### 2. Virtual Environment (Optional but recommended)
+
 1. Create virtual environment
+
 ```sh
 python -m venv env
 ```
 
 2. Activate virtual environment:
+
 - On Windows
-    ```sh
-    env/Scripts/activate
-    ```
+  ```sh
+  env/Scripts/activate
+  ```
 - On macOS/Linux:
-    ```sh
-    source env/bin/activate
-    ```
+  ```sh
+  source env/bin/activate
+  ```
+
 ### 3. Backend Setup
 
 1. Navigate to the backend directory:
+
    ```sh
    cd backend
    ```
 
-3. Install requirements:
+2. Install requirements:
    ```sh
    pip install -r requirements.txt
    ```
-4. Start the Flask server:
+3. Start the Flask server:
    ```sh
    flask run
    ```
 
 ### 4. Frontend Setup
+
 1. Open new terminal (If needed)
 2. Navigate to the frontend directory:
    ```sh
@@ -114,9 +127,9 @@ This project initially used data from SAP's internal systems. For the purpose of
 ## Project Journey and Research
 
 If you would like to see our project journey in more detail, including research methodology, documentation and presentations, here is a more in-depth dive:
-- **UCI x SAP Capstone Project**: [here](docs/project_journey.pdf)
+
+- **UCI x SAP Capstone Project**: [EMAT_Overview](docs/EMAT_Overview.pdf)
 
 ## Acknowledgments
 
-Special thanks to the SAP teams for their support throughout the project, as well as our mentors Prof. Dr. Tobias Schimmer, Paige Perusset, and Julian Egbert 
-
+Special thanks to the SAP teams for their support throughout the project, as well as our mentors Prof. Dr. Tobias Schimmer, Paige Perusset, and Julian Egbert

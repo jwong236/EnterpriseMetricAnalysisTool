@@ -30,12 +30,22 @@ EMAT, developed in collaboration with SAP and inspired by DevOps frameworks such
 Here’s a quick look at EMAT in action:
 
 ### Full Page Screenshot
-
-![Dashboard Screenshot](linktoscreenshot)
+![Fullpage Screenshot](https://github.com/user-attachments/assets/71df56a5-4580-4767-be3a-c55a682cf5d8)
 
 ### Interactive Demo
+<details>
+<summary>Click to view GIFs!</summary>
 
-![Interactive Demo GIF](linktogif)
+### Adjust Sprint Range (with sprint number or date)
+![Recording2024-11-21233522-ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/110e36a2-4a5b-4b5e-870a-8d24ddfcf90c)
+
+### Correlations Bar Graph
+![Recording2024-11-21233625-ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/ce23284f-17b6-47b7-b8f8-a9981edb404f)
+
+### Data Points Line Graph
+![Recording2024-11-21233732-ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/63438c05-fbfe-4175-b681-e28bb2bdaa67)
+
+</details>
 
 ### Live Demo
 
@@ -128,7 +138,7 @@ This project initially used data from SAP's internal systems. For the purpose of
 
 If you would like to see our project journey in more detail, including research methodology, documentation and presentations, here is a more in-depth dive:
 
-- **UCI x SAP Capstone Project**: [EMAT_Overview](docs/EMAT_Overview.pdf)
+- **UCI x SAP Capstone Project**: [EMAT_Overview](docs/EMAT_Overview.pdf) (In progress)
 
 ## Acknowledgments
 
